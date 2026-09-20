@@ -114,10 +114,11 @@ export default function Menu() {
     setActiveMenu(tabId);
     setSearchQuery("");
 
+    // Jump back to the top whenever a main menu tab changes.
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "smooth",
+      behavior: "auto",
     });
   };
 
@@ -335,7 +336,6 @@ function SearchResult({ item }) {
   return (
     <article className="border-b border-white/10 py-6">
       <div className="flex items-start gap-5">
-        {/* Thumbnail */}
         {item.image && (
           <div className="h-20 w-24 shrink-0 overflow-hidden bg-white/5 sm:h-24 sm:w-28">
             <img
@@ -348,7 +348,6 @@ function SearchResult({ item }) {
         )}
 
         <div className="min-w-0 flex-1">
-          {/* Location */}
           <p className="mb-2 text-[8px] font-medium uppercase tracking-[0.18em] text-white/25">
             {item.menuLabel}
             <span className="mx-2 text-white/15">
