@@ -14,6 +14,37 @@ export const dietaryLabels = {
 };
 
 /* =========================================================
+   SHARED SECTIONS
+========================================================= */
+
+const createExtrasSection = (number) => ({
+  id: "extras",
+  number,
+  title: "Extras",
+  note: "Sides and additions for the table.",
+  items: [
+    {
+      name: "Banchan Small",
+      note: "Pint",
+      price: "$7.38",
+    },
+    {
+      name: "Banchan Large",
+      note: "Quart",
+      price: "$13.53",
+    },
+    {
+      name: "Multigrain Rice",
+      price: "$2.46",
+    },
+    {
+      name: "White Rice",
+      price: "$2.46",
+    },
+  ],
+});
+
+/* =========================================================
    DINNER
 ========================================================= */
 
@@ -26,7 +57,8 @@ export const dinnerSections = [
     items: [
       {
         name: "House Salad",
-        description: "Mixed greens, tomatoes, carrots & cucumbers",
+        description:
+          "Mixed greens, tomatoes, carrots & cucumbers",
         price: "$6",
       },
       {
@@ -128,13 +160,15 @@ export const dinnerSections = [
       },
       {
         name: "Grilled Mackerel",
-        description: "Grilled mackerel with radish and lemon",
+        description:
+          "Grilled mackerel with radish and lemon",
         price: "$16",
         dietary: ["GF"],
       },
       {
         name: "Steamed Egg Custard",
-        description: "Soufflé of egg with scallions",
+        description:
+          "Soufflé of egg with scallions",
         price: "$7",
       },
       {
@@ -156,7 +190,8 @@ export const dinnerSections = [
       {
         name: "Wang Kalbi Gui",
         korean: "왕갈비구이",
-        description: "Short ribs marinated in soy sauce",
+        description:
+          "Short ribs marinated in soy sauce",
         price: "$50",
         image: wangKalbiImage,
         imageAlt:
@@ -197,7 +232,8 @@ export const dinnerSections = [
       {
         name: "Hang Jeong Sal",
         korean: "항정살",
-        description: "Premium pork jowl from Sakura Farms",
+        description:
+          "Premium pork jowl from Sakura Farms",
         price: "$35",
       },
       {
@@ -214,7 +250,8 @@ export const dinnerSections = [
       {
         name: "Dae Gi Kalbi",
         korean: "돼지갈비",
-        description: "Prime pork rib marinated in soy sauce",
+        description:
+          "Prime pork rib marinated in soy sauce",
         price: "$38",
       },
       {
@@ -445,49 +482,51 @@ export const dinnerSections = [
       },
     ],
   },
+
   {
-  id: "japanese-entrees",
-  title: "Japanese Entrées",
-  description:
-    "Japanese-inspired noodles and crispy cutlet entrées.",
-  items: [
-    {
-      name: "Seafood Udon Bokkum",
-      price: "$34.44",
-      description:
-        "Mixture of various seafood items stir-fried with vegetables and udon noodles.",
-    },
-    {
-      name: "Vegetable Udon Bokkum",
-      price: "$27.06",
-      description:
-        "Udon noodles stir-fried with vegetables in a soy sauce base.",
-      dietary: ["V"],
-    },
-    {
-      name: "Tonkatsu Entree",
-      price: "$24.60",
-      description:
-        "Deep-fried breaded pork cutlet with katsu sauce on the side.",
-    },
-    {
-      name: "Chicken Katsu Entree",
-      price: "$24.60",
-      description:
-        "Deep-fried breaded chicken cutlet with katsu sauce on the side.",
-    },
-    {
-      name: "Chicken Udon Bokkum",
-      price: "$29.52",
-      description:
-        "Chicken stir-fried with vegetables and udon noodles with a soy sauce base.",
-    },
-  ],
-},
+    id: "japanese-entrees",
+    number: "06",
+    title: "Japanese Entrées",
+    note:
+      "Japanese-inspired noodles and crispy cutlet entrées.",
+    items: [
+      {
+        name: "Seafood Udon Bokkum",
+        price: "$34.44",
+        description:
+          "Mixture of various seafood items stir-fried with vegetables and udon noodles.",
+      },
+      {
+        name: "Vegetable Udon Bokkum",
+        price: "$27.06",
+        description:
+          "Udon noodles stir-fried with vegetables in a soy sauce base.",
+        dietary: ["V"],
+      },
+      {
+        name: "Tonkatsu Entree",
+        price: "$24.60",
+        description:
+          "Deep-fried breaded pork cutlet with katsu sauce on the side.",
+      },
+      {
+        name: "Chicken Katsu Entree",
+        price: "$24.60",
+        description:
+          "Deep-fried breaded chicken cutlet with katsu sauce on the side.",
+      },
+      {
+        name: "Chicken Udon Bokkum",
+        price: "$29.52",
+        description:
+          "Chicken stir-fried with vegetables and udon noodles with a soy sauce base.",
+      },
+    ],
+  },
 
   {
     id: "bibimbap",
-    number: "06",
+    number: "07",
     title: "Bibimbaps",
     note:
       "Bibim Bap or Dolsot Bibim Bap. Delightfully seasoned vegetables and fried egg. Dolsot is served in a sizzling hot stone bowl.",
@@ -507,7 +546,7 @@ export const dinnerSections = [
 
   {
     id: "ssambap",
-    number: "07",
+    number: "08",
     title: "Ssambap",
     note:
       "Make your own wraps. Korean BBQ bites and rice alongside pickles, greens, ssamjang, gochujang, assorted vegetables and miso soup.",
@@ -523,7 +562,7 @@ export const dinnerSections = [
 
   {
     id: "childrens",
-    number: "08",
+    number: "09",
     title: "Children's Menu",
     note:
       "Served with rice, fried mandoo and miso soup. Children 12 and under.",
@@ -563,9 +602,10 @@ export const dinnerSections = [
 
   {
     id: "dinner-combos",
-    number: "09",
+    number: "10",
     title: "Dinner Combos",
-    note: "All combos served with four bowls of rice.",
+    note:
+      "All combos served with four bowls of rice.",
     items: [
       {
         name: "Combo #1 — Korean Beef Set",
@@ -587,6 +627,8 @@ export const dinnerSections = [
       },
     ],
   },
+
+  createExtrasSection("11"),
 ];
 
 /* =========================================================
@@ -699,6 +741,8 @@ export const lunchSections = [
       },
     ],
   },
+
+  createExtrasSection("02"),
 ];
 
 /* =========================================================
@@ -788,7 +832,6 @@ export const drinkSections = [
         name: "Paumanok Merlot",
         category: "Red Wine",
       },
-
       {
         name: "Paumanok Festival Chardonnay",
         category: "White Wine",
@@ -805,17 +848,14 @@ export const drinkSections = [
         name: "Paumanok Sauvignon Blanc",
         category: "White Wine",
       },
-
       {
         name: "Paumanok Vineyard Dry Rosé",
         category: "Rosé",
       },
-
       {
         name: "Paumanok Blanc De Blanc",
         category: "Champagne",
       },
-
       {
         name: "Plum Wine",
         category: "Kinsen Plum",
@@ -844,7 +884,6 @@ export const drinkSections = [
         name: "Hot Sake",
         category: "Sho Chiku Bai",
       },
-
       {
         name: "Cold Lychee Sake",
         category: "Yuki Nigori",
@@ -885,7 +924,6 @@ export const drinkSections = [
         name: "Gridlock Hazy IPA",
         category: "Draft Beer",
       },
-
       {
         name: "Schofferhoffer Grapefruit",
         category: "Canned Beer",
@@ -894,7 +932,6 @@ export const drinkSections = [
         name: "Founder's All Day IPA",
         category: "Canned Beer",
       },
-
       {
         name: "Terra",
         category: "Bottled Korean Beer",
@@ -920,7 +957,6 @@ export const drinkSections = [
         name: "Zero Sugar Soju",
         category: "Soju",
       },
-
       {
         name: "Apple",
         category: "Flavored Soju",
@@ -953,12 +989,10 @@ export const drinkSections = [
         name: "Apple Mango",
         category: "Flavored Soju",
       },
-
       {
         name: "Wild Raspberry Wine",
         category: "Bok Boon Ja",
       },
-
       {
         name: "So-Mak Tower",
         category: "So-Mak",
@@ -1022,7 +1056,6 @@ export const drinkSections = [
         name: "Brisk Iced Tea",
         category: "Tea",
       },
-
       {
         name: "Orange Juice",
         category: "Juice",
@@ -1039,7 +1072,6 @@ export const drinkSections = [
         name: "Lemonade",
         category: "Juice",
       },
-
       {
         name: "Milk",
         category: "Other",
@@ -1054,31 +1086,4 @@ export const drinkSections = [
       },
     ],
   },
-
-  {
-  id: "extras",
-  title: "Extras",
-  description:
-    "Sides and additions for the table.",
-  items: [
-    {
-      name: "Banchan Small",
-      note: "Pint",
-      price: "$7.38",
-    },
-    {
-      name: "Banchan Large",
-      note: "Quart",
-      price: "$13.53",
-    },
-    {
-      name: "Multigrain Rice",
-      price: "$2.46",
-    },
-    {
-      name: "White Rice",
-      price: "$2.46",
-    },
-  ],
-},
 ];

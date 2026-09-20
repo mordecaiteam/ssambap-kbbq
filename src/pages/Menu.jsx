@@ -113,6 +113,25 @@ export default function Menu() {
   const handleTabChange = (tabId) => {
     setActiveMenu(tabId);
     setSearchQuery("");
+
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const handleSectionJump = (sectionId) => {
+    const section = document.getElementById(sectionId);
+
+    if (!section) {
+      return;
+    }
+
+    section.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const clearSearch = () => {
@@ -126,7 +145,8 @@ export default function Menu() {
         <div className="mx-auto max-w-[1400px] px-6 md:px-10 lg:px-12">
           <div className="flex overflow-x-auto">
             {menuTabs.map((tab) => {
-              const active = activeMenu === tab.id && !isSearching;
+              const active =
+                activeMenu === tab.id && !isSearching;
 
               return (
                 <button
@@ -192,18 +212,21 @@ export default function Menu() {
           {!isSearching && (
             <div className="flex flex-wrap gap-x-7 gap-y-3 py-7">
               {currentSections.map((section) => (
-                <a
+                <button
                   key={section.id}
-                  href={`#${section.id}`}
+                  type="button"
+                  onClick={() =>
+                    handleSectionJump(section.id)
+                  }
                   className="text-[9px] font-medium uppercase tracking-[0.18em] text-white/30 transition-colors duration-300 hover:text-white"
                 >
                   {section.title}
-                </a>
+                </button>
               ))}
             </div>
           )}
 
-          {/* Search status */}
+          {/* Search Status */}
           {isSearching && (
             <div className="flex items-center justify-between gap-6 py-5">
               <p className="text-[9px] font-medium uppercase tracking-[0.18em] text-white/30">
@@ -328,7 +351,9 @@ function SearchResult({ item }) {
           {/* Location */}
           <p className="mb-2 text-[8px] font-medium uppercase tracking-[0.18em] text-white/25">
             {item.menuLabel}
-            <span className="mx-2 text-white/15">/</span>
+            <span className="mx-2 text-white/15">
+              /
+            </span>
             {item.sectionTitle}
           </p>
 
@@ -349,6 +374,12 @@ function SearchResult({ item }) {
               {item.category && (
                 <p className="mt-1 text-[9px] uppercase tracking-[0.15em] text-white/30">
                   {item.category}
+                </p>
+              )}
+
+              {item.note && (
+                <p className="mt-1 text-[9px] uppercase tracking-[0.15em] text-white/30">
+                  {item.note}
                 </p>
               )}
             </div>

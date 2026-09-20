@@ -1,18 +1,23 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import wangKalbiImage from "../assets/menu/menu-wang-kalbi.jpg";
+import bulgogiImage from "../assets/menu/menu-bulgogi.jpg";
+
 const dishes = [
   {
     number: "01",
     name: "Wang Kalbi Gui",
     description: "Marinated beef short ribs",
-    image: "/images/kalbi.jpg",
+    image: wangKalbiImage,
+    alt: "Wang Kalbi Gui at Ssambap Korean BBQ",
   },
   {
     number: "02",
     name: "Bulgogi",
     description: "Thinly sliced marinated beef",
-    image: "/images/bulgogi.jpg",
+    image: bulgogiImage,
+    alt: "Bulgogi at Ssambap Korean BBQ",
   },
 ];
 
@@ -53,7 +58,8 @@ export default function FeaturedDishes() {
               <div className="aspect-[4/5] overflow-hidden bg-white/5">
                 <img
                   src={dish.image}
-                  alt={dish.name}
+                  alt={dish.alt}
+                  loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]"
                 />
               </div>
@@ -79,10 +85,14 @@ export default function FeaturedDishes() {
 
         <Link
           to="/menu"
-          className="mt-12 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.18em] text-white/60 md:hidden"
+          className="mt-12 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white md:hidden"
         >
           Full Menu
-          <ArrowRight size={15} strokeWidth={1.5} />
+
+          <ArrowRight
+            size={15}
+            strokeWidth={1.5}
+          />
         </Link>
       </div>
     </section>

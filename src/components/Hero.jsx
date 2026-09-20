@@ -12,7 +12,7 @@ import hero4 from "../assets/hero/hero-4.webp";
 
 const slides = [hero1, hero2, hero3, hero4];
 
-const SLIDE_DURATION = 6000;
+const SLIDE_DURATION = 3000;
 
 const RESY_VENUE_ID = 95670;
 const RESY_API_KEY = "DE2RYLWYAtFzT7qTe35vhkovpRJ0zO5C";

@@ -1,3 +1,7 @@
+import { Play } from "lucide-react";
+
+const YOUTUBE_VIDEO_ID = "MXfelO0kbns";
+
 export default function Experience() {
   return (
     <section className="border-t border-white/10 bg-black px-6 py-28 text-white md:py-40">
@@ -16,17 +20,34 @@ export default function Experience() {
           </h2>
         </div>
 
-        <div className="mx-auto mt-20 max-w-4xl overflow-hidden bg-white/5">
-          <img
-            src="/images/experience.jpg"
-            alt="Korean barbecue and banchan"
-            className="aspect-[16/10] w-full object-cover"
-          />
+        <div className="mx-auto mt-20 max-w-5xl">
+          <div className="relative aspect-video overflow-hidden border border-white/10 bg-white/5">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEO_ID}?rel=0`}
+              title="The Ssambap Korean BBQ Experience"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="absolute inset-0 h-full w-full"
+            />
+          </div>
+
+          <div className="mt-5 flex items-center justify-center gap-2 text-white/30">
+            <Play
+              size={12}
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
+
+            <span className="text-[9px] font-medium uppercase tracking-[0.2em]">
+              Watch the Ssambap experience
+            </span>
+          </div>
         </div>
 
         <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-7 text-white/50 md:text-base">
-          Gather around the grill with banchan, fresh lettuce, rice,
-          and everything you need to build your own ssam.
+          Gather around the grill with banchan, fresh lettuce,
+          rice, and everything you need to build your own ssam.
         </p>
       </div>
     </section>
