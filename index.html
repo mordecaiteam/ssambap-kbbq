@@ -3,9 +3,16 @@
   <head>
     <meta charset="UTF-8" />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon.svg"
+    />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
 
     <meta
       name="description"
@@ -19,11 +26,11 @@
     <div id="root"></div>
 
     <!--
-      Hidden form for Netlify Forms detection.
+      Static Netlify form blueprint.
 
       Netlify scans the generated HTML during deployment.
-      Since our real contact form is rendered by React,
-      this static copy allows Netlify to detect the form.
+      The visible contact form is rendered by React, so this
+      static form allows Netlify to discover the "contact" form.
     -->
     <form
       name="contact"
@@ -32,19 +39,67 @@
       data-netlify-honeypot="bot-field"
       hidden
     >
-      <input type="hidden" name="form-name" value="contact" />
+      <input
+        type="hidden"
+        name="form-name"
+        value="contact"
+      />
 
-      <input name="bot-field" />
+      <p>
+        <label>
+          Don't fill this out if you're human:
+          <input
+            name="bot-field"
+            type="text"
+          />
+        </label>
+      </p>
 
-      <input type="text" name="name" />
+      <p>
+        <label>
+          Name
+          <input
+            type="text"
+            name="name"
+          />
+        </label>
+      </p>
 
-      <input type="email" name="email" />
+      <p>
+        <label>
+          Email
+          <input
+            type="email"
+            name="email"
+          />
+        </label>
+      </p>
 
-      <input type="tel" name="phone" />
+      <p>
+        <label>
+          Phone
+          <input
+            type="tel"
+            name="phone"
+          />
+        </label>
+      </p>
 
-      <textarea name="message"></textarea>
+      <p>
+        <label>
+          Message
+          <textarea name="message"></textarea>
+        </label>
+      </p>
+
+      <button type="submit">
+        Submit
+      </button>
     </form>
 
-    <script type="module" src="/src/main.jsx"></script>
+    <script
+      type="module"
+      src="/src/main.jsx"
+    ></script>
   </body>
 </html>

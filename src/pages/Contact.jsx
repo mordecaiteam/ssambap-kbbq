@@ -31,8 +31,11 @@ const hours = [
 ];
 
 export default function Contact() {
-  const [formData, setFormData] = useState(initialForm);
-  const [status, setStatus] = useState("idle");
+  const [formData, setFormData] =
+    useState(initialForm);
+
+  const [status, setStatus] =
+    useState("idle");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -48,26 +51,35 @@ export default function Contact() {
 
     setStatus("submitting");
 
+    const form = event.currentTarget;
+    const formDataToSubmit = new FormData(form);
+
     try {
       const response = await fetch("/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type":
+            "application/x-www-form-urlencoded",
         },
-        body: new URLSearchParams({
-          "form-name": "contact",
-          ...formData,
-        }).toString(),
+        body: new URLSearchParams(
+          formDataToSubmit
+        ).toString(),
       });
 
       if (!response.ok) {
-        throw new Error("Form submission failed");
+        throw new Error(
+          `Form submission failed with status ${response.status}`
+        );
       }
 
       setFormData(initialForm);
       setStatus("success");
     } catch (error) {
-      console.error("Contact form error:", error);
+      console.error(
+        "Contact form error:",
+        error
+      );
+
       setStatus("error");
     }
   };
@@ -76,7 +88,6 @@ export default function Contact() {
     <main className="min-h-screen bg-black text-white">
       <section className="px-6 py-20 md:px-10 md:py-28 lg:px-12 lg:py-32">
         <div className="mx-auto grid max-w-[1400px] gap-20 lg:grid-cols-[1.15fr_0.85fr] lg:gap-28">
-
           {/* ======================================================
               LEFT — CONTACT FORM
           ====================================================== */}
@@ -95,15 +106,18 @@ export default function Contact() {
               </h1>
 
               <p className="mt-7 max-w-md text-sm leading-7 text-white/40">
-                Send us a message and we'll get back to you as soon
-                as we can.
+                Send us a message and we'll get
+                back to you as soon as we can.
               </p>
             </div>
 
             {status === "success" ? (
               <div className="flex min-h-[420px] flex-col justify-center border-y border-white/10">
                 <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full border border-white/20">
-                  <Check size={20} strokeWidth={1.5} />
+                  <Check
+                    size={20}
+                    strokeWidth={1.5}
+                  />
                 </div>
 
                 <h2 className="text-3xl font-medium tracking-[-0.04em]">
@@ -111,13 +125,16 @@ export default function Contact() {
                 </h2>
 
                 <p className="mt-4 max-w-sm text-sm leading-6 text-white/50">
-                  Thanks for reaching out. We'll get back to you as
-                  soon as we can.
+                  Thanks for reaching out. We'll
+                  get back to you as soon as we
+                  can.
                 </p>
 
                 <button
                   type="button"
-                  onClick={() => setStatus("idle")}
+                  onClick={() =>
+                    setStatus("idle")
+                  }
                   className="mt-8 w-fit text-[10px] font-medium uppercase tracking-[0.2em] text-white/50 transition-colors hover:text-white"
                 >
                   Send another message
@@ -131,19 +148,21 @@ export default function Contact() {
                 data-netlify-honeypot="bot-field"
                 onSubmit={handleSubmit}
               >
-                {/* Netlify */}
+                {/* Netlify form identifier */}
                 <input
                   type="hidden"
                   name="form-name"
                   value="contact"
                 />
 
-                {/* Honeypot */}
-                <p className="hidden">
+                {/* Netlify honeypot */}
+                <p className="absolute -m-px h-px w-px overflow-hidden border-0 p-0 [clip:rect(0,0,0,0)]">
                   <label>
-                    Don't fill this out:
+                    Don't fill this out if you're
+                    human:
                     <input
                       name="bot-field"
+                      type="text"
                       tabIndex="-1"
                       autoComplete="off"
                     />
@@ -192,7 +211,9 @@ export default function Contact() {
                     className="mb-3 block text-[9px] font-medium uppercase tracking-[0.25em] text-white/40"
                   >
                     Message
-                    <span className="ml-1 text-white/30">*</span>
+                    <span className="ml-1 text-white/30">
+                      *
+                    </span>
                   </label>
 
                   <textarea
@@ -212,15 +233,18 @@ export default function Contact() {
                     role="alert"
                     className="mt-6 text-sm leading-6 text-white/60"
                   >
-                    Something went wrong while sending your message.
-                    Please try again.
+                    Something went wrong while
+                    sending your message. Please
+                    try again.
                   </p>
                 )}
 
                 {/* Submit */}
                 <button
                   type="submit"
-                  disabled={status === "submitting"}
+                  disabled={
+                    status === "submitting"
+                  }
                   className="group mt-12 flex h-12 items-center gap-4 bg-white px-6 text-[10px] font-semibold uppercase tracking-[0.18em] text-black transition-all duration-300 hover:bg-white/85 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {status === "submitting"
@@ -243,10 +267,14 @@ export default function Contact() {
               RIGHT — RESTAURANT INFORMATION
           ====================================================== */}
           <aside className="lg:border-l lg:border-white/10 lg:pl-14">
-
             {/* Address */}
             <InfoSection
-              icon={<MapPin size={18} strokeWidth={1.5} />}
+              icon={
+                <MapPin
+                  size={18}
+                  strokeWidth={1.5}
+                />
+              }
               title="Address"
             >
               <p className="text-sm leading-7 text-white/70">
@@ -273,36 +301,48 @@ export default function Contact() {
 
             {/* Hours */}
             <InfoSection
-              icon={<Clock3 size={18} strokeWidth={1.5} />}
+              icon={
+                <Clock3
+                  size={18}
+                  strokeWidth={1.5}
+                />
+              }
               title="Hours"
             >
               <div className="max-w-sm space-y-2">
-                {hours.map(([day, time]) => (
-                  <div
-                    key={day}
-                    className="flex justify-between gap-8 text-sm"
-                  >
-                    <span className="text-white/40">
-                      {day}
-                    </span>
-
-                    <span
-                      className={
-                        time === "Closed"
-                          ? "text-white/30"
-                          : "text-white/70"
-                      }
+                {hours.map(
+                  ([day, time]) => (
+                    <div
+                      key={day}
+                      className="flex justify-between gap-8 text-sm"
                     >
-                      {time}
-                    </span>
-                  </div>
-                ))}
+                      <span className="text-white/40">
+                        {day}
+                      </span>
+
+                      <span
+                        className={
+                          time === "Closed"
+                            ? "text-white/30"
+                            : "text-white/70"
+                        }
+                      >
+                        {time}
+                      </span>
+                    </div>
+                  )
+                )}
               </div>
             </InfoSection>
 
             {/* Phone + Email */}
             <InfoSection
-              icon={<Phone size={18} strokeWidth={1.5} />}
+              icon={
+                <Phone
+                  size={18}
+                  strokeWidth={1.5}
+                />
+              }
               title="Contact"
             >
               <div className="flex flex-col items-start gap-4">
@@ -338,14 +378,14 @@ export default function Contact() {
             <InfoSection title="Follow">
               <div className="flex gap-3">
                 <SocialLink
-                  href="YOUR_INSTAGRAM_URL"
+                  href="https://www.instagram.com/ssambapkbbq/"
                   label="Instagram"
                 >
                   <FaInstagram size={17} />
                 </SocialLink>
 
                 <SocialLink
-                  href="YOUR_FACEBOOK_URL"
+                  href="https://www.facebook.com/ssambapkbbq/"
                   label="Facebook"
                 >
                   <FaFacebookF size={15} />
@@ -363,7 +403,11 @@ export default function Contact() {
    COMPONENTS
 ========================================================= */
 
-function InfoSection({ icon, title, children }) {
+function InfoSection({
+  icon,
+  title,
+  children,
+}) {
   return (
     <div className="border-b border-white/10 py-9 first:pt-0">
       <div className="mb-5 flex items-center gap-3">
@@ -383,7 +427,11 @@ function InfoSection({ icon, title, children }) {
   );
 }
 
-function SocialLink({ href, label, children }) {
+function SocialLink({
+  href,
+  label,
+  children,
+}) {
   return (
     <a
       href={href}
@@ -416,7 +464,9 @@ function FormField({
         {label}
 
         {required && (
-          <span className="ml-1 text-white/30">*</span>
+          <span className="ml-1 text-white/30">
+            *
+          </span>
         )}
       </label>
 
