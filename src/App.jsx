@@ -9,23 +9,20 @@ import Gallery from "./pages/Gallery";
 import Menu from "./pages/Menu";
 import Contact from "./pages/Contact";
 
-function App() {
+export default function App() {
   return (
-    <>
+    <div className="relative min-h-screen bg-black">
       <ScrollToTop />
-
       <Navbar />
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
-
-      <Footer />
-    </>
+      <div className="relative z-20 bg-black">
+        <Footer />
+      </div>
+    </div>
   );
 }
-
-export default App;
