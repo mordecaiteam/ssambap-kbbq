@@ -68,15 +68,15 @@ const comboDetails = {
     bbq: [
       {
         name: "Wang Kalbi Gui",
-        image: "table-bbq-wang-kalbi-gui",
+        image: "kitchen-wang-kalbi-gui",
       },
       {
         name: "Bulgogi",
-        image: "table-bbq-bulgogi",
+        image: "kitchen-bulgogi",
       },
       {
         name: "Chadol Bagi",
-        image: "table-bbq-cha-dol-bagi",
+        image: "kitchen-cha-dol-bagi",
       },
     ],
     sides: [
@@ -100,15 +100,15 @@ const comboDetails = {
     bbq: [
       {
         name: "Dae Gi Kalbi",
-        image: "table-bbq-dae-gi-kalbi",
+        image: "kitchen-dae-gi-kalbi",
       },
       {
         name: "Sam Gyub Sal",
-        image: "table-bbq-sam-gyub-sal",
+        image: "kitchen-sam-gyub-sal",
       },
       {
         name: "Hang Jeong Sal",
-        image: "table-bbq-hang-jeong-sal",
+        image: "kitchen-hang-jeong-sal",
       },
     ],
     sides: [
@@ -220,8 +220,12 @@ function ComboDish({ dish, onImageClick }) {
 
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/55">
               {dish.options.map((option, index) => (
-                <span key={option} className="inline-flex items-center gap-2">
+                <span
+                  key={option}
+                  className="inline-flex items-center gap-2"
+                >
                   {option}
+
                   {index < dish.options.length - 1 && (
                     <span className="text-white/20">·</span>
                   )}
@@ -271,13 +275,18 @@ function ComboDish({ dish, onImageClick }) {
 export default function DinnerComboCard({ item }) {
   const [activeImage, setActiveImage] = useState(null);
 
-  const comboNumber = getComboNumber(item.name);
+  const comboNumber =
+    Number(item.comboNumber) ||
+    getComboNumber(item.name);
+
   const details = comboDetails[comboNumber];
 
   useEffect(() => {
     if (!activeImage) return;
 
-    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyOverflow =
+      document.body.style.overflow;
+
     const previousHtmlOverflow =
       document.documentElement.style.overflow;
 
@@ -285,7 +294,9 @@ export default function DinnerComboCard({ item }) {
     document.documentElement.style.overflow = "hidden";
 
     const onKeyDown = (event) => {
-      if (event.key === "Escape") setActiveImage(null);
+      if (event.key === "Escape") {
+        setActiveImage(null);
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -303,36 +314,53 @@ export default function DinnerComboCard({ item }) {
 
   return (
     <>
-      <article className="min-w-0">
-        {/* COLORED COMBO HEADER */}
+      <article
+        className="min-w-0"
+        aria-label={`${details.title} dinner combo`}
+      >
+        {/* SINGLE COLORED COMBO HEADER */}
         <div
-          className="relative mb-7 overflow-hidden border-b pb-6 pl-5 pr-2 pt-5 sm:pl-6"
+          className="relative mb-7 overflow-hidden border-b pb-6 pl-5 pr-3 pt-5 sm:pl-6"
           style={{
             borderColor: details.color,
             background: `linear-gradient(90deg, ${details.colorSoft}, transparent 85%)`,
           }}
         >
-          {/* Color accent */}
           <span
-            className="absolute bottom-0 left-0 top-0 w-[3px]"
-            style={{ backgroundColor: details.color }}
+            className="absolute bottom-0 left-0 top-0 w-[4px]"
+            style={{
+              backgroundColor: details.color,
+            }}
           />
 
-          <div className="flex items-start justify-between gap-5">
+          <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p
                 className="text-[10px] font-semibold uppercase tracking-[0.2em]"
-                style={{ color: details.color }}
+                style={{
+                  color: details.color,
+                }}
               >
                 Combo #{comboNumber}
               </p>
 
-              <h3 className="mt-2 text-xl font-medium tracking-[-0.035em] text-white md:text-2xl">
+              {/* Title matches the combo's own accent */}
+              <h3
+                className="mt-2 text-xl font-semibold tracking-[-0.035em] md:text-2xl"
+                style={{
+                  color: details.color,
+                }}
+              >
                 {details.title}
               </h3>
+
+              {/* Rice included with every set */}
+              <p className="mt-3 text-xs font-medium tracking-[0.02em] text-white/75 sm:text-sm">
+                Includes 4 Bowls of Rice
+              </p>
             </div>
 
-            <span className="shrink-0 text-xl font-medium text-white md:text-2xl">
+            <span className="shrink-0 text-xl font-semibold text-white md:text-2xl">
               {item.price || details.price}
             </span>
           </div>
@@ -406,12 +434,6 @@ export default function DinnerComboCard({ item }) {
                 onImageClick={setActiveImage}
               />
             ))}
-
-            <div className="border-t border-white/10 py-4">
-              <p className="text-sm text-white/65">
-                4 Bowls of Rice
-              </p>
-            </div>
           </section>
         </div>
       </article>

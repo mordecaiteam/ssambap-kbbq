@@ -1,388 +1,335 @@
 
-// =========================================================
-// MENU IMAGE LOADER
-// =========================================================
-// Load both original photos and their matching thumbnails.
-// Vite converts these imports into production-ready asset URLs.
-const menuImages = import.meta.glob("../assets/menu/**/*.webp", {
-  eager: true,
-  import: "default",
-});
+ // =========================================================
+ // MENU IMAGE LOADER
+ // =========================================================
+ const menuImages = import.meta.glob("../assets/menu/**/*.webp", {
+   eager: true,
+   import: "default",
+ });
 
-// Only original images are eligible for menuImage().
-// This prevents files inside /thumbs/ from being selected.
-const originalImageEntries = Object.entries(menuImages).filter(
-  ([path]) => !path.includes("/thumbs/")
-);
+ const originalImageEntries = Object.entries(menuImages).filter(
+   ([path]) => !path.includes("/thumbs/")
+ );
 
-const originalImageLookup = new Map();
+ const originalImageLookup = new Map();
 
-for (const [path, imageUrl] of originalImageEntries) {
-  const filename = path.split("/").pop();
+ for (const [path, imageUrl] of originalImageEntries) {
+   const filename = path.split("/").pop();
 
-  if (filename && !originalImageLookup.has(filename)) {
-    originalImageLookup.set(filename, imageUrl);
-  }
-}
+   if (filename && !originalImageLookup.has(filename)) {
+     originalImageLookup.set(filename, imageUrl);
+   }
+ }
 
-const menuImage = (filename) => {
-  const image = originalImageLookup.get(`${filename}.webp`) ?? null;
+ const menuImage = (filename) => {
+   const image = originalImageLookup.get(`${filename}.webp`) ?? null;
 
-  if (!image) {
-    console.warn(`[Ssambap] Missing menu image: ${filename}.webp`);
-  }
+   if (!image) {
+     console.warn(`[Ssambap] Missing menu image: ${filename}.webp`);
+   }
 
-  return image;
-};
+   return image;
+ };
 
-// Returns the optimized thumbnail URL for a full-size menu image URL.
-// Existing dish image fields remain unchanged.
-const thumbnailByOriginal = new Map();
+ const thumbnailByOriginal = new Map();
 
-for (const [path, originalUrl] of originalImageEntries) {
-  const filename = path.split("/").pop();
-  const folder = path.slice(0, path.lastIndexOf("/"));
-  const thumbnail = menuImages[`${folder}/thumbs/${filename}`];
+ for (const [path, originalUrl] of originalImageEntries) {
+   const filename = path.split("/").pop();
+   const folder = path.slice(0, path.lastIndexOf("/"));
+   const thumbnail = menuImages[`${folder}/thumbs/${filename}`];
 
-  if (thumbnail) thumbnailByOriginal.set(originalUrl, thumbnail);
-}
+   if (thumbnail) thumbnailByOriginal.set(originalUrl, thumbnail);
+ }
 
-export const menuThumbnail = (originalUrl) =>
-  thumbnailByOriginal.get(originalUrl) ?? originalUrl;
+ export const menuThumbnail = (originalUrl) =>
+   thumbnailByOriginal.get(originalUrl) ?? originalUrl;
 
-export const dietaryLabels = {
-  GF: "Gluten Free",
-  V: "Vegetarian",
-  VG: "Vegan",
-};
+ export const dietaryLabels = {
+   GF: "Gluten Free",
+   V: "Vegetarian",
+   VG: "Vegan",
+ };
 
-const createExtrasSection = (number) => ({
-  id: "extras",
-  number,
-  title: "Extras",
-  note: "Sides and additions for the table.",
-  items: [
-    {
-      name: "Banchan Small",
-      note: "Pint",
-      price: "$7.38",
-    },
-    {
-      name: "Banchan Large",
-      note: "Quart",
-      price: "$13.53",
-    },
-    {
-      name: "Multigrain Rice",
-      price: "$2.46",
-    },
-    {
-      name: "White Rice",
-      price: "$2.46",
-    },
-  ],
-});
+ const createExtrasSection = (number) => ({
+   id: "extras",
+   number,
+   title: "Extras",
+   note: "Sides and additions for the table.",
+   items: [
+     { name: "Banchan Small", note: "Pint", price: "$7.38" },
+     { name: "Banchan Large", note: "Quart", price: "$13.53" },
+     { name: "Multigrain Rice", price: "$2.46" },
+     { name: "White Rice", price: "$2.46" },
+   ],
+ });
 
-/* =========================================================
-   DINNER
-\========================================================= */
-
-export const dinnerSections = [
-  {
-    id: "salads",
-    number: "01",
-    title: "Salads",
-    note: "Served with ginger or house sesame dressing.",
-    items: [
-      {
-        name: "House Salad",
-        image: menuImage("salad-house-salad"),
-        imageAlt: "House Salad at Ssambap Korean BBQ",
-        description: "Mixed greens, tomatoes, carrots & cucumbers",
-        price: "$6",
-      },
-      {
-        name: "Avocado Salad",
-        image: menuImage("salad-avocado-salad"),
-        imageAlt: "Avocado Salad at Ssambap Korean BBQ",
-        description: "House salad with avocados",
-        price: "$12",
-      },
-      {
-        name: "Asian Spring Salad",
-        image: menuImage("salad-asian-spring-salad"),
-        imageAlt: "Asian Spring Salad at Ssambap Korean BBQ",
-        description:
-          "Mixed greens, fuji apple, asian pear, clementine",
-        price: "$14",
-      },
-    ],
-  },
-  {
-    id: "soups",
-    number: "02",
-    title: "Soups",
-    items: [
-      {
-        name: "Miso",
-        image: menuImage("traditional-miso"),
-        imageAlt: "Miso at Ssambap Korean BBQ",
-        description: "Japanese soybean",
-        price: "$3",
-      },
-      {
-        name: "Mandoo",
-        image: menuImage("traditional-mandoo"),
-        imageAlt: "Mandoo Soup at Ssambap Korean BBQ",
-        description: "Choice of vegetable or chicken dumpling",
-        price: "$5",
-        dietary: ["V"],
-      },
-      {
-        name: "Clam",
-        image: menuImage("traditional-clam"),
-        imageAlt: "Clam Soup at Ssambap Korean BBQ",
-        description: "Dashi broth with top neck clams",
-        price: "$8",
-        dietary: ["GF"],
-      },
-      {
-        name: "Seaweed",
-        image: menuImage("traditional-seaweed"),
-        imageAlt: "Seaweed Soup at Ssambap Korean BBQ",
-        description:
-          "Seaweed with dashi broth. Large seaweed with dashi broth includes beef or clams.",
-        price: "SM. $5 / LG. $16",
-        dietary: ["V", "VG"],
-      },
-    ],
-  },
-  {
-    id: "appetizers",
-    number: "03",
-    title: "Appetizers",
-    items: [
-      {
-        name: "Pajun",
-        images: [
-          {
-            src: menuImage("appetizer-pajun-small"),
-            label: "Small",
-          },
-          {
-            src: menuImage("appetizer-pajun-large"),
-            label: "Large",
-          },
-        ],
-        imageAlt: "Pajun at Ssambap Korean BBQ",
-        description:
-          "Pan-fried Korean pancake. Choice of scallion, kimchi, or seafood.",
-        price: "SM. $13 / LG. $18",
-      },
-      {
-        name: "Mandoo",
-        images: [
-          {
-            src: menuImage("appetizer-mandoo-veggie"),
-            label: "Vegetable",
-          },
-          {
-            src: menuImage("appetizer-mandoo-beef"),
-            label: "Beef",
-          },
-        ],
-        imageAlt: "Mandoo at Ssambap Korean BBQ",
-        description:
-          "Pan-fried beef dumplings or pan-fried vegetable dumplings",
-        price: "VEGI $6 / MEAT $7",
-        dietary: ["V"],
-      },
-      {
-        name: "Shumai",
-        image: menuImage("appetizer-shumai"),
-        imageAlt: "Shumai at Ssambap Korean BBQ",
-        description: "Steamed shrimp dumplings",
-        price: "$6",
-      },
-      {
-        name: "Edamame",
-        image: menuImage("appetizer-edamame"),
-        imageAlt: "Edamame at Ssambap Korean BBQ",
-        description: "Steamed soybean",
-        price: "$6",
-        dietary: ["GF", "V", "VG"],
-      },
-      {
-        name: "Sae Woo Twigim",
-        image: menuImage("appetizer-sae-woo-twigim"),
-        imageAlt: "Sae Woo Twigim at Ssambap Korean BBQ",
-        description: "Breaded fried shrimp",
-        price: "5pc · $15",
-      },
-      {
-        name: "Tukbockee",
-        images: [
-          {
-            src: menuImage("appetizer-tukbockee"),
-            label: "Spicy",
-            spicy: true,
-          },
-          {
-            src: menuImage("appetizer-tukbockee-non-spicy"),
-            label: "Non-Spicy",
-            spicy: false,
-          },
-        ],
-        imageAlt: "Tukbockee at Ssambap Korean BBQ",
-        description:
-          "Stir-fried rice cake in gochujang (chili sauce) with fish cake and potato noodles. Can add beef and make it non-spicy +$3.",
-        price: "$11",
-        spicy: true,
-      },
-      {
-        name: "Chicken Wings",
-        image: menuImage("appetizer-chicken-wings"),
-        imageAlt: "Chicken Wings at Ssambap Korean BBQ",
-        description: "Fried chicken wings with sweet and spicy sauce",
-        price: "$13",
-      },
-      {
-        name: "Grilled Mackerel",
-        image: menuImage("appetizer-grilled-mackerel"),
-        imageAlt: "Grilled Mackerel at Ssambap Korean BBQ",
-        description: "Grilled mackerel with radish and lemon",
-        price: "$16",
-        dietary: ["GF"],
-      },
-      {
-        name: "Steamed Egg Custard",
-        image: menuImage("appetizer-steamed-egg-custard"),
-        imageAlt: "Steamed Egg Custard at Ssambap Korean BBQ",
-        description: "Soufflé of egg with scallions",
-        price: "$7",
-      },
-      {
-        name: "So Tteok So Tteok",
-        image: menuImage("appetizer-so-tteok-so-tteok"),
-        imageAlt: "So Tteok So Tteok at Ssambap Korean BBQ",
-        description:
-          "Pork sausage and rice cake with sweet gochujang",
-        price: "$10",
-      },
-    ],
-  },
-  {
-    id: "korean-bbq",
-    number: "04",
-    title: "Authentic Korean BBQ",
-    note:
-      "Our freshly prepared barbecued dishes are marinated in our signature sauce and served with a variety of leaf lettuce, assorted banchan (side dishes), and a choice of white or multigrain rice. Raw dishes from the kitchen are served to be cooked on a gas grill table. To make ssam, place a cooked small portion of meat with a thin layer of bean paste on a bed of lettuce and wrap it all together. Rice can be added to make Ssambap.",
-    items: [
-      {
-        name: "Wang Kalbi Gui",
-        korean: "왕갈비구이",
-        image: menuImage("kitchen-wang-kalbi-gui"),
-        tableImage: menuImage("table-bbq-wang-kalbi-gui"),
-        imageAlt: "Wang Kalbi Gui at Ssambap Korean BBQ",
-        description: "Short ribs marinated in soy sauce",
-        price: "$50",
-      },
-      {
-        name: "Saeng Kalbi Gui",
-        korean: "생갈비구이",
-        image: menuImage("kitchen-saeng-kalbi-gui"),
-        tableImage: menuImage("table-bbq-saeng-kalbi-gui"),
-        imageAlt: "Saeng Kalbi Gui at Ssambap Korean BBQ",
-        description: "Un-marinated short ribs",
-        price: "$50",
-        dietary: ["GF"],
-      },
-      {
-        name: "Bulgogi",
-        korean: "불고기",
-        image: menuImage("kitchen-bulgogi"),
-        tableImage: menuImage("table-bbq-bulgogi"),
-        imageAlt: "Bulgogi at Ssambap Korean BBQ",
-        description:
-          "Thinly sliced prime rib-eye, marinated in soy sauce",
-        price: "$42",
-      },
-      {
-        name: "Cha-Dol-Bagi",
-        korean: "차돌박이",
-        image: menuImage("kitchen-cha-dol-bagi"),
-        tableImage: menuImage("table-bbq-cha-dol-bagi"),
-        imageAlt: "Cha-Dol-Bagi at Ssambap Korean BBQ",
-        description: "Un-marinated beef brisket, thinly sliced",
-        price: "$40",
-        dietary: ["GF"],
-      },
-      {
-        name: "Steamed Seafood",
-        image: menuImage("kitchen-steamed-seafood"),
-        tableImage: menuImage("table-bbq-steamed-seafood"),
-        imageAlt: "Steamed Seafood at Ssambap Korean BBQ",
-        description:
-          "Clams, mussels, shrimp, 1/2 lobster, snow crab legs, steamed in dashi, served with spicy mayo & citrus salt",
-        price: "$80",
-        dietary: ["GF"],
-      },
-      {
-        name: "Hang Jeong Sal",
-        korean: "항정살",
-        image: menuImage("kitchen-hang-jeong-sal"),
-        tableImage: menuImage("table-bbq-hang-jeong-sal"),
-        imageAlt: "Hang Jeong Sal at Ssambap Korean BBQ",
-        description: "Premium pork jowl from Sakura Farms",
-        price: "$35",
-      },
-      {
-        name: "Sam-Gyub-Sal",
-        korean: "삼겹살",
-        image: menuImage("kitchen-sam-gyub-sal"),
-        tableImage: menuImage("table-bbq-sam-gyub-sal"),
-        imageAlt: "Sam-Gyub-Sal at Ssambap Korean BBQ",
-        description:
-          "Thick sliced un-marinated Berkshire pork belly",
-        price: "$40",
-        dietary: ["GF"],
-      },
-      {
-        name: "Dae Gi Kalbi",
-        korean: "돼지갈비",
-        image: menuImage("kitchen-dae-gi-kalbi"),
-        tableImage: menuImage("table-bbq-dae-gi-kalbi"),
-        imageAlt: "Dae Gi Kalbi at Ssambap Korean BBQ",
-        description: "Prime pork rib marinated in soy sauce",
-        price: "$38",
-      },
-      {
-        name: "Dak Gui",
-        korean: "닭구이",
-        image: menuImage("kitchen-dak-gui"),
-        tableImage: menuImage("table-bbq-dak-gui"),
-        imageAlt: "Dak Gui at Ssambap Korean BBQ",
-        description:
-          "Sliced chicken breast marinated in special house sauce",
-        price: "$34",
-      },
-      {
-        name: "Vegetable Gui",
-        korean: "야채구이",
-        image: menuImage("kitchen-vegetable-gui"),
-        tableImage: menuImage("table-bbq-vegetable-gui"),
-        imageAlt: "Vegetable Gui at Ssambap Korean BBQ",
-        description:
-          "An assortment of fresh seasonal vegetable favorites marinated in special house sauce",
-        price: "$32",
-        dietary: ["V", "VG"],
-      },
-    ],
-  },
+ // =========================================================
+ // DINNER
+ // =========================================================
+ export const dinnerSections = [
+   {
+     id: "salads",
+     number: "01",
+     title: "Salads",
+     note: "Served with ginger or house sesame dressing.",
+     items: [
+       {
+         name: "House Salad",
+         image: menuImage("salad-house-salad"),
+         imageAlt: "House Salad at Ssambap Korean BBQ",
+         description: "Mixed greens, tomatoes, carrots & cucumbers",
+         price: "$6",
+       },
+       {
+         name: "Avocado Salad",
+         image: menuImage("salad-avocado-salad"),
+         imageAlt: "Avocado Salad at Ssambap Korean BBQ",
+         description: "House salad with avocados",
+         price: "$12",
+       },
+       {
+         name: "Asian Spring Salad",
+         image: menuImage("salad-asian-spring-salad"),
+         imageAlt: "Asian Spring Salad at Ssambap Korean BBQ",
+         description: "Mixed greens, fuji apple, asian pear, clementine",
+         price: "$14",
+       },
+     ],
+   },
+   {
+     id: "appetizers",
+     number: "02",
+     title: "Appetizers",
+     soupItems: [
+       {
+         name: "Miso",
+         image: menuImage("traditional-miso"),
+         imageAlt: "Miso at Ssambap Korean BBQ",
+         description: "Japanese soybean",
+         price: "$3",
+       },
+       {
+         name: "Mandoo",
+         image: menuImage("traditional-mandoo"),
+         imageAlt: "Mandoo Soup at Ssambap Korean BBQ",
+         description: "Choice of vegetable or chicken dumpling",
+         price: "$5",
+         dietary: ["V"],
+       },
+       {
+         name: "Clam",
+         image: menuImage("traditional-clam"),
+         imageAlt: "Clam Soup at Ssambap Korean BBQ",
+         description: "Dashi broth with top neck clams",
+         price: "$8",
+         dietary: ["GF"],
+       },
+       {
+         name: "Seaweed",
+         image: menuImage("traditional-seaweed"),
+         imageAlt: "Seaweed Soup at Ssambap Korean BBQ",
+         description:
+           "Seaweed with dashi broth. Large seaweed with dashi broth includes beef or clams.",
+         price: "SM. $5 / LG. $16",
+         dietary: ["V", "VG"],
+       },
+     ],
+     items: [
+       {
+         name: "Pajun",
+         images: [
+           { src: menuImage("appetizer-pajun-small"), label: "Small" },
+           { src: menuImage("appetizer-pajun-large"), label: "Large" },
+         ],
+         imageAlt: "Pajun at Ssambap Korean BBQ",
+         description:
+           "Pan-fried Korean pancake. Choice of scallion, kimchi, or seafood.",
+         price: "SM. $13 / LG. $18",
+       },
+       {
+         name: "Mandoo",
+         images: [
+           { src: menuImage("appetizer-mandoo-veggie"), label: "Vegetable" },
+           { src: menuImage("appetizer-mandoo-beef"), label: "Beef" },
+         ],
+         imageAlt: "Mandoo at Ssambap Korean BBQ",
+         description:
+           "Pan-fried beef dumplings or pan-fried vegetable dumplings",
+         price: "VEGI $6 / MEAT $7",
+         dietary: ["V"],
+       },
+       {
+         name: "Shumai",
+         image: menuImage("appetizer-shumai"),
+         imageAlt: "Shumai at Ssambap Korean BBQ",
+         description: "Steamed shrimp dumplings",
+         price: "$6",
+       },
+       {
+         name: "Edamame",
+         image: menuImage("appetizer-edamame"),
+         imageAlt: "Edamame at Ssambap Korean BBQ",
+         description: "Steamed soybean",
+         price: "$6",
+         dietary: ["GF", "V", "VG"],
+       },
+       {
+         name: "Sae Woo Twigim",
+         image: menuImage("appetizer-sae-woo-twigim"),
+         imageAlt: "Sae Woo Twigim at Ssambap Korean BBQ",
+         description: "Breaded fried shrimp",
+         price: "5pc · $15",
+       },
+       {
+         name: "Tukbockee",
+         images: [
+           {
+             src: menuImage("appetizer-tukbockee"),
+             label: "Spicy",
+             spicy: true,
+           },
+           {
+             src: menuImage("appetizer-tukbockee-non-spicy"),
+             label: "Non-Spicy",
+             spicy: false,
+           },
+         ],
+         imageAlt: "Tukbockee at Ssambap Korean BBQ",
+         description:
+           "Stir-fried rice cake in gochujang (chili sauce) with fish cake and potato noodles. Can add beef and make it non-spicy +$3.",
+         price: "$11",
+         spicy: true,
+       },
+       {
+         name: "Chicken Wings",
+         image: menuImage("appetizer-chicken-wings"),
+         imageAlt: "Chicken Wings at Ssambap Korean BBQ",
+         description: "Fried chicken wings with sweet and spicy sauce",
+         price: "$13",
+       },
+       {
+         name: "Grilled Mackerel",
+         image: menuImage("appetizer-grilled-mackerel"),
+         imageAlt: "Grilled Mackerel at Ssambap Korean BBQ",
+         description: "Grilled mackerel with radish and lemon",
+         price: "$16",
+         dietary: ["GF"],
+       },
+       {
+         name: "Steamed Egg Custard",
+         image: menuImage("appetizer-steamed-egg-custard"),
+         imageAlt: "Steamed Egg Custard at Ssambap Korean BBQ",
+         description: "Soufflé of egg with scallions",
+         price: "$7",
+       },
+       {
+         name: "So Tteok So Tteok",
+         image: menuImage("appetizer-so-tteok-so-tteok"),
+         imageAlt: "So Tteok So Tteok at Ssambap Korean BBQ",
+         description: "Pork sausage and rice cake with sweet gochujang",
+         price: "$10",
+       },
+     ],
+   },
+   {
+     id: "korean-bbq",
+     number: "03",
+     title: "Authentic Korean BBQ",
+     note:
+       "Our freshly prepared barbecued dishes are marinated in our signature sauce and served with a variety of leaf lettuce, assorted banchan (side dishes), and a choice of white or multigrain rice. Raw dishes from the kitchen are served to be cooked on a gas grill table. To make ssam, place a cooked small portion of meat with a thin layer of bean paste on a bed of lettuce and wrap it all together. Rice can be added to make Ssambap.",
+     items: [
+       {
+         name: "Wang Kalbi Gui",
+         korean: "왕갈비구이",
+         image: menuImage("kitchen-wang-kalbi-gui"),
+        //  tableImage: menuImage("kitchen-wang-kalbi-gui"),
+         imageAlt: "Wang Kalbi Gui at Ssambap Korean BBQ",
+         description: "Short ribs marinated in soy sauce",
+         price: "$50",
+       },
+       {
+         name: "Saeng Kalbi Gui",
+         korean: "생갈비구이",
+         image: menuImage("kitchen-saeng-kalbi-gui"),
+         //tableImage: menuImage("kitchen-saeng-kalbi-gui"),
+         imageAlt: "Saeng Kalbi Gui at Ssambap Korean BBQ",
+         description: "Un-marinated short ribs",
+         price: "$50",
+         dietary: ["GF"],
+       },
+       {
+         name: "Bulgogi",
+         korean: "불고기",
+         image: menuImage("kitchen-bulgogi"),
+         //tableImage: menuImage("kitchen-bulgogi"),
+         imageAlt: "Bulgogi at Ssambap Korean BBQ",
+         description: "Thinly sliced prime rib-eye, marinated in soy sauce",
+         price: "$42",
+       },
+       {
+         name: "Cha-Dol-Bagi",
+         korean: "차돌박이",
+         image: menuImage("kitchen-cha-dol-bagi"),
+         //tableImage: menuImage("kitchen-cha-dol-bagi"),
+         imageAlt: "Cha-Dol-Bagi at Ssambap Korean BBQ",
+         description: "Un-marinated beef brisket, thinly sliced",
+         price: "$40",
+         dietary: ["GF"],
+       },
+       {
+         name: "Hang Jeong Sal",
+         korean: "항정살",
+         image: menuImage("kitchen-hang-jeong-sal"),
+         //tableImage: menuImage("kitchen-hang-jeong-sal"),
+         imageAlt: "Hang Jeong Sal at Ssambap Korean BBQ",
+         description: "Premium pork jowl from Sakura Farms",
+         price: "$35",
+       },
+       {
+         name: "Sam-Gyub-Sal",
+         korean: "삼겹살",
+         image: menuImage("kitchen-sam-gyub-sal"),
+         //tableImage: menuImage("kitchen-sam-gyub-sal"),
+         imageAlt: "Sam-Gyub-Sal at Ssambap Korean BBQ",
+         description: "Thick sliced un-marinated Berkshire pork belly",
+         price: "$40",
+         dietary: ["GF"],
+       },
+       {
+         name: "Dae Gi Kalbi",
+         korean: "돼지갈비",
+         image: menuImage("kitchen-dae-gi-kalbi"),
+         //tableImage: menuImage("kitchen-dae-gi-kalbi"),
+         imageAlt: "Dae Gi Kalbi at Ssambap Korean BBQ",
+         description: "Prime pork rib marinated in soy sauce",
+         price: "$38",
+       },
+       {
+         name: "Dak Gui",
+         korean: "닭구이",
+         image: menuImage("kitchen-dak-gui"),
+         //tableImage: menuImage("kitchen-dak-gui"),
+         imageAlt: "Dak Gui at Ssambap Korean BBQ",
+         description: "Sliced chicken breast marinated in special house sauce",
+         price: "$34",
+       },
+       {
+         name: "Vegetable Gui",
+         korean: "야채구이",
+         image: menuImage("kitchen-vegetable-gui"),
+         //tableImage: menuImage("kitchen-vegetable-gui"),
+         imageAlt: "Vegetable Gui at Ssambap Korean BBQ",
+         description:
+           "An assortment of fresh seasonal vegetable favorites marinated in special house sauce",
+         price: "$32",
+         dietary: ["V", "VG"],
+       },
+     ],
+   },
 
   {
     id: "traditional",
-    number: "05",
+    number: "04",
     title: "Traditional Selections",
     note:
       "Served with assorted banchan (side dishes) and choice of rice (white or multigrain). Add ramen or udon +$3. Extra rice or rice cake +$2. Extra egg +$1.",
@@ -399,7 +346,7 @@ export const dinnerSections = [
       {
         name: "Tuk Bae Kee Bulgogi",
         korean: "뚝배기 불고기",
-        image: menuImage("traditional-tuk-bae-kee-bulgogi"),
+        image: menuImage("traditional-tuk-bae-bulgogi"),
         description:
           "Marinated rib-eye in soy sauce cooked with rice cake, mushrooms, potato noodles and scallions in beef broth",
         price: "$22",
@@ -606,7 +553,7 @@ export const dinnerSections = [
   },
   {
     id: "bibimbaps",
-    number: "06",
+    number: "05",
     title: "Bibimbaps",
     note:
       "Delightfully seasoned vegetables and fried egg. Dolsot is served in a sizzling hot stone bowl.",
@@ -614,7 +561,7 @@ export const dinnerSections = [
       {
         name: "Bibim Bap",
         korean: "비빔밥",
-        image: menuImage("bibimbap-bibim-bap"),
+        image: menuImage("bibimbap-bibimbap"),
         description:
           "Choose one protein: bulgogi (beef), chicken, tofu, kimchi, or seafood (+$2). Choose white or multigrain rice and gochujang (chili sauce) or house sesame dressing. Extra toppings: mixed greens +$1, avocado +$2, additional fried egg +$1 (white or whole).",
         price: "$22",
@@ -622,7 +569,7 @@ export const dinnerSections = [
       {
         name: "Dolsot Bibim Bap",
         korean: "돌솥 비빔밥",
-        image: menuImage("bibimbap-dolsot-bibim-bap"),
+        image: menuImage("bibimbap-dolsot-bibimbap"),
         description:
           "Seasoned vegetables and fried egg served in a sizzling hot stone bowl. Choose one protein: bulgogi (beef), chicken, tofu, kimchi, or seafood (+$2). Choose white or multigrain rice and gochujang or house sesame dressing.",
         price: "$22",
@@ -631,7 +578,7 @@ export const dinnerSections = [
   },
   {
     id: "ssambap",
-    number: "07",
+    number: "06",
     title: "Ssambap",
     note:
       "Make your own wraps. Korean BBQ bites and rice alongside pickles, greens, ssamjang (soy bean paste sauce), gochujang, assorted vegetables and miso soup.",
@@ -647,7 +594,7 @@ export const dinnerSections = [
   },
   {
     id: "children",
-    number: "08",
+    number: "07",
     title: "Children's Menu",
     note:
       "Served with rice, fried mandoo (vegetable or beef) and miso soup. Children 12 and under.",
@@ -689,766 +636,774 @@ export const dinnerSections = [
       },
     ],
   },
-  createExtrasSection("09"),
+  createExtrasSection("08"),
 ];
 
 // =========================================================
-// DINNER COMBOS
+// END OF DINNER SECTIONS
 // =========================================================
 
-const comboSoupChoices = [
-  {
-    name: "Soon Doo Boo",
-    image: menuImage("traditional-soon-doo-boo"),
-  },
-  {
-    name: "Kimchi Jigae",
-    image: menuImage("traditional-kimchi-jigae"),
-  },
-  {
-    name: "Dwenjang Jigae",
-    image: menuImage("traditional-dwenjang-jigae"),
-  },
-];
+ // =========================================================
+ // DINNER COMBOS
+ // =========================================================
 
-const comboPajunChoices = [
-  {
-    name: "Scallion",
-    image: menuImage("appetizer-pajun-small"),
-  },
-  {
-    name: "Kimchi",
-    image: menuImage("appetizer-pajun-small"),
-  },
-  {
-    name: "Seafood",
-    image: menuImage("appetizer-pajun-small"),
-  },
-];
+ const comboSoupChoices = [
+   {
+     name: "Soon Doo Boo",
+     image: menuImage("traditional-soon-doo-boo"),
+   },
+   {
+     name: "Kimchi Jigae",
+     image: menuImage("traditional-kimchi-jigae"),
+   },
+   {
+     name: "Dwenjang Jigae",
+     image: menuImage("traditional-dwenjang-jigae"),
+   },
+ ];
 
-const comboEggCustard = {
-  name: "Egg Custard",
-  image: menuImage("appetizer-steamed-egg-custard"),
-};
+ const comboPajunChoices = [
+   {
+     name: "Scallion",
+     image: menuImage("appetizer-pajun-small"),
+   },
+   {
+     name: "Kimchi",
+     image: menuImage("appetizer-pajun-small"),
+   },
+   {
+     name: "Seafood",
+     image: menuImage("appetizer-pajun-small"),
+   },
+ ];
 
-export const dinnerComboSections = [
-  {
-    id: "dinner-combos",
-    number: "01",
-    title: "Dinner Combos",
-    note: "All combos served with four bowls of rice.",
-    items: [
-      {
-        name: "Combo #1 — Korean Beef Set",
-        price: "$160",
-        comboNumber: "01",
-        comboColor: "red",
-        comboTitle: "Korean Beef Set",
-        comboGroups: [
-          {
-            title: "Korean Beef Set",
-            subtitle: "Included",
-            items: [
-              {
-                name: "Wang Kalbi Gui",
-                image: menuImage("table-bbq-wang-kalbi-gui"),
-              },
-              {
-                name: "Bulgogi",
-                image: menuImage("table-bbq-bulgogi"),
-              },
-              {
-                name: "Chadol Bagi",
-                image: menuImage("table-bbq-cha-dol-bagi"),
-              },
-            ],
-          },
-          {
-            title: "Choice of 1 Soup",
-            subtitle: "Choose 1",
-            items: comboSoupChoices,
-          },
-          {
-            title: "Plus",
-            subtitle: "Included",
-            items: [
-              {
-                name: "1 Small Pajun",
-                image: menuImage("appetizer-pajun-small"),
-                options: comboPajunChoices,
-              },
-              comboEggCustard,
-              { name: "4 Bowls of Rice" },
-            ],
-          },
-        ],
-      },
-      {
-        name: "Combo #2 — Korean Pork Set",
-        price: "$140",
-        comboNumber: "02",
-        comboColor: "yellow",
-        comboTitle: "Korean Pork Set",
-        comboGroups: [
-          {
-            title: "Korean Pork Set",
-            subtitle: "Included",
-            items: [
-              {
-                name: "Dae Gi Kalbi",
-                image: menuImage("table-bbq-dae-gi-kalbi"),
-              },
-              {
-                name: "Sam Gyub Sal",
-                image: menuImage("table-bbq-sam-gyub-sal"),
-              },
-              {
-                name: "Hang Jeong Sal",
-                image: menuImage("table-bbq-hang-jeong-sal"),
-              },
-            ],
-          },
-          {
-            title: "Choice of 1 Soup",
-            subtitle: "Choose 1",
-            items: comboSoupChoices,
-          },
-          {
-            title: "Plus",
-            subtitle: "Included",
-            items: [
-              {
-                name: "1 Small Pajun",
-                image: menuImage("appetizer-pajun-small"),
-                options: comboPajunChoices,
-              },
-              comboEggCustard,
-              { name: "4 Bowls of Rice" },
-            ],
-          },
-        ],
-      },
-      {
-        name: "Combo #3 — Korean BBQ Set",
-        price: "$150",
-        comboNumber: "03",
-        comboColor: "blue",
-        comboTitle: "Korean BBQ Set",
-        comboGroups: [
-          {
-            title: "Choice of 2 BBQ",
-            subtitle: "Choose 2",
-            note: "Except Beef Kalbi and Steamed Seafood",
-            items: [
-              {
-                name: "Bulgogi",
-                image: menuImage("table-bbq-bulgogi"),
-              },
-              {
-                name: "Chadol Bagi",
-                image: menuImage("table-bbq-cha-dol-bagi"),
-              },
-              {
-                name: "Sam Gyub Sal",
-                image: menuImage("table-bbq-sam-gyub-sal"),
-              },
-              {
-                name: "Dae Gi Kalbi",
-                image: menuImage("table-bbq-dae-gi-kalbi"),
-              },
-              {
-                name: "Hang Jeong Sal",
-                image: menuImage("table-bbq-hang-jeong-sal"),
-              },
-              {
-                name: "Dak Gui",
-                image: menuImage("table-bbq-dak-gui"),
-              },
-              {
-                name: "Vegetable Gui",
-                image: menuImage("table-bbq-vegetable-gui"),
-              },
-            ],
-          },
-          {
-            title: "Choice of 1 Spicy",
-            subtitle: "Choose 1",
-            items: [
-              {
-                name: "Spicy Chicken",
-                image: menuImage("traditional-spicy-chicken"),
-              },
-              {
-                name: "Squid Bokkum",
-                image: menuImage("traditional-squid-bokkum"),
-              },
-              {
-                name: "Jayook Tofu Kimchi",
-                image: menuImage("traditional-jayook-tofu-kimchi"),
-              },
-            ],
-          },
-          {
-            title: "Choice of 1 Soup",
-            subtitle: "Choose 1",
-            items: comboSoupChoices,
-          },
-          {
-            title: "Plus",
-            subtitle: "Included",
-            items: [
-              {
-                name: "1 Large Pancake",
-                image: menuImage("appetizer-pajun-large"),
-                options: comboPajunChoices,
-              },
-              comboEggCustard,
-              { name: "4 Bowls of Rice" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+ const comboEggCustard = {
+   name: "Egg Custard",
+   image: menuImage("appetizer-steamed-egg-custard"),
+ };
 
-// =========================================================
-// LUNCH COMBOS
-// =========================================================
+ export const dinnerComboSections = [
+   {
+     id: "dinner-combos",
+     number: "01",
+     title: "Dinner Combos",
+     note: "All combos served with four bowls of rice.",
+     items: [
+       {
+         name: "Combo #1 — Korean Beef Set",
+         price: "$160",
+         comboNumber: "01",
+         comboColor: "red",
+         comboTitle: "Korean Beef Set",
+         comboGroups: [
+           {
+             title: "Korean Beef Set",
+             subtitle: "Included",
+             items: [
+               {
+                 name: "Wang Kalbi Gui",
+                 image: menuImage("kitchen-wang-kalbi-gui"),
+               },
+               {
+                 name: "Bulgogi",
+                 image: menuImage("kitchen-bulgogi"),
+               },
+               {
+                 name: "Chadol Bagi",
+                 image: menuImage("kitchen-cha-dol-bagi"),
+               },
+             ],
+           },
+           {
+             title: "Choice of 1 Soup",
+             subtitle: "Choose 1",
+             items: comboSoupChoices,
+           },
+           {
+             title: "Plus",
+             subtitle: "Included",
+             items: [
+               {
+                 name: "1 Small Pajun",
+                 image: menuImage("appetizer-pajun-small"),
+                 options: comboPajunChoices,
+               },
+               comboEggCustard,
+               { name: "4 Bowls of Rice" },
+             ],
+           },
+         ],
+       },
+       {
+         name: "Combo #2 — Korean Pork Set",
+         price: "$140",
+         comboNumber: "02",
+         comboColor: "yellow",
+         comboTitle: "Korean Pork Set",
+         comboGroups: [
+           {
+             title: "Korean Pork Set",
+             subtitle: "Included",
+             items: [
+               {
+                 name: "Dae Gi Kalbi",
+                 image: menuImage("kitchen-dae-gi-kalbi"),
+               },
+               {
+                 name: "Sam Gyub Sal",
+                 image: menuImage("kitchen-sam-gyub-sal"),
+               },
+               {
+                 name: "Hang Jeong Sal",
+                 image: menuImage("kitchen-hang-jeong-sal"),
+               },
+             ],
+           },
+           {
+             title: "Choice of 1 Soup",
+             subtitle: "Choose 1",
+             items: comboSoupChoices,
+           },
+           {
+             title: "Plus",
+             subtitle: "Included",
+             items: [
+               {
+                 name: "1 Small Pajun",
+                 image: menuImage("appetizer-pajun-small"),
+                 options: comboPajunChoices,
+               },
+               comboEggCustard,
+               { name: "4 Bowls of Rice" },
+             ],
+           },
+         ],
+       },
+       {
+         name: "Combo #3 — Korean BBQ Set",
+         price: "$150",
+         comboNumber: "03",
+         comboColor: "blue",
+         comboTitle: "Korean BBQ Set",
+         comboGroups: [
+           {
+             title: "Choice of 2 BBQ",
+             subtitle: "Choose 2",
+             note: "Except Beef Kalbi and Steamed Seafood",
+             items: [
+               {
+                 name: "Bulgogi",
+                 image: menuImage("kitchen-bulgogi"),
+               },
+               {
+                 name: "Chadol Bagi",
+                 image: menuImage("kitchen-cha-dol-bagi"),
+               },
+               {
+                 name: "Sam Gyub Sal",
+                 image: menuImage("kitchen-sam-gyub-sal"),
+               },
+               {
+                 name: "Dae Gi Kalbi",
+                 image: menuImage("kitchen-dae-gi-kalbi"),
+               },
+               {
+                 name: "Hang Jeong Sal",
+                 image: menuImage("kitchen-hang-jeong-sal"),
+               },
+               {
+                 name: "Dak Gui",
+                 image: menuImage("kitchen-bbq-dak-gui"),
+               },
+               {
+                 name: "Vegetable Gui",
+                 image: menuImage("kitchen-vegetable-gui"),
+               },
+             ],
+           },
+           {
+             title: "Choice of 1 Spicy",
+             subtitle: "Choose 1",
+             items: [
+               {
+                 name: "Spicy Chicken",
+                 image: menuImage("traditional-spicy-chicken"),
+               },
+               {
+                 name: "Squid Bokkum",
+                 image: menuImage("traditional-squid-bokkum"),
+               },
+               {
+                 name: "Jayook Tofu Kimchi",
+                 image: menuImage("traditional-jayook-tofu-kimchi"),
+               },
+             ],
+           },
+           {
+             title: "Choice of 1 Soup",
+             subtitle: "Choose 1",
+             items: comboSoupChoices,
+           },
+           {
+             title: "Plus",
+             subtitle: "Included",
+             items: [
+               {
+                 name: "1 Large Pancake",
+                 image: menuImage("appetizer-pajun-large"),
+                 options: comboPajunChoices,
+               },
+               comboEggCustard,
+               { name: "4 Bowls of Rice" },
+             ],
+           },
+         ],
+       },
+     ],
+   },
+ ];
 
-export const lunchComboSections = [
-  {
-    id: "lunch-combo-20",
-    number: "01",
-    title: "$20 Lunch Combo",
-    note:
-      "Tuesday–Friday · 12:00 PM–3:00 PM. All combos served with kimchi and yellow radish.",
-    items: [
-      {
-        name: "Ramyun Noodles",
-        image: menuImage("lunch-combo-ramyun-noodles"),
-        description:
-          "Korean-style ramyun noodles with a choice of beef, pork, or seafood (+$3). Side of fried beef or vegetable dumplings and rice.",
-        price: "$20",
-      },
-      {
-        name: "Curry Katsu",
-        image: menuImage("lunch-combo-curry-katsu"),
-        description:
-          "Deep-fried chicken thigh, Japanese-style curry, Korean slaw with citrus mayo, rice and miso soup.",
-        price: "$20",
-      },
-      {
-        name: "Kimbap",
-        image: menuImage("lunch-combo-kimbap"),
-        description:
-          "Vegetables and rice rolled in seaweed. Served with a small portion of tteokbokki and soup of the day.",
-        price: "$20",
-      },
-    ],
-  },
-  
-{
-  id: "lunch-combo-28-34",
-  number: "02",
-  title: "$28 + $34 Lunch Combos",
-  note:
-    "Select your soup, then choose Option 1 for $28 or Option 2 for $34. Instead of soup, try our Neng Myun with Option 2 only. Dine-in only.",
-  items: [
-    {
-      name: "Select Your Soup",
-      description:
-        "Choose one: Soon Doo Boo, Yook Gae Jang, Kimchi Jigae, or Dwenjang.",
-      choices: [
-        {
-          name: "Soon Doo Boo",
-          image: menuImage("traditional-soon-doo-boo"),
-        },
-        {
-          name: "Yook Gae Jang",
-          image: menuImage("traditional-yook-gae-jang"),
-        },
-        {
-          name: "Kimchi Jigae",
-          image: menuImage("traditional-kimchi-jigae"),
-        },
-        {
-          name: "Dwenjang Jigae",
-          image: menuImage("traditional-dwenjang-jigae"),
-        },
-      ],
-    },
-    {
-      name: "Option 1",
-      description:
-        "Choose Squid Bokkum, Jap Chae, Spicy Chicken, or Spicy Pork.",
-      price: "$28",
-      choices: [
-        {
-          name: "Squid Bokkum",
-          image: menuImage("traditional-squid-bokkum"),
-        },
-        {
-          name: "Jap Chae",
-          image: menuImage("traditional-jap-chae"),
-        },
-        {
-          name: "Spicy Chicken",
-          image: menuImage("traditional-spicy-chicken"),
-        },
-        {
-          name: "Spicy Pork",
-          image: menuImage("traditional-spicy-pork"),
-        },
-      ],
-    },
-    {
-      name: "Option 2",
-      description:
-        "Choose Pork BBQ, Bulgogi, Chicken BBQ, or La Kalbi.",
-      price: "$34",
-      choices: [
-        {
-          name: "Pork BBQ",
-          image: menuImage("table-bbq-dae-gi-kalbi"),
-        },
-        {
-          name: "Bulgogi",
-          image: menuImage("table-bbq-bulgogi"),
-        },
-        {
-          name: "Chicken BBQ",
-          image: menuImage("table-bbq-dak-gui"),
-        },
-        {
-          name: "La Kalbi",
-          image: menuImage("table-bbq-wang-kalbi-gui"),
-        },
-      ],
-    },
-    {
-      name: "Neng Myun Alternative",
-      description:
-        "Instead of soup, choose Bibim Neng Myun or Mool Neng Myun. Available with Option 2 only.",
-      choices: [
-        {
-          name: "Bibim Neng Myun",
-          image: menuImage("traditional-bibim-neng-myun"),
-        },
-        {
-          name: "Mool Neng Myun",
-          image: menuImage("traditional-mool-neng-myun"),
-        },
-      ],
-    },
-  ],
-},
+ // =========================================================
+ // LUNCH COMBOS
+ // =========================================================
 
-];
+ export const lunchComboSections = [
+   {
+     id: "lunch-combo-20",
+     number: "01",
+     title: "$20 Lunch Combo",
+     note:
+       "Tuesday–Friday · 12:00 PM–3:00 PM. All combos served with kimchi and yellow radish.",
+     items: [
+       {
+         name: "Ramyun Noodles",
+         image: menuImage("lunch-combo-ramyun-noodles"),
+         description:
+           "Korean-style ramyun noodles with a choice of beef, pork, or seafood (+$3). Side of fried beef or vegetable dumplings and rice.",
+         price: "$20",
+       },
+       {
+         name: "Curry Katsu",
+         image: menuImage("lunch-combo-curry-katsu"),
+         description:
+           "Deep-fried chicken thigh, Japanese-style curry, Korean slaw with citrus mayo, rice and miso soup.",
+         price: "$20",
+       },
+       {
+         name: "Kimbap",
+         image: menuImage("lunch-combo-kimbap"),
+         description:
+           "Vegetables and rice rolled in seaweed. Served with a small portion of tteokbokki and soup of the day.",
+         price: "$20",
+       },
+     ],
+   },
+   {
+     id: "lunch-combo-28-34",
+     number: "02",
+     title: "$28 + $34 Lunch Combos",
+     note:
+       "Select your soup, then choose Option 1 for $28 or Option 2 for $34. Instead of soup, try our Neng Myun with Option 2 only. Dine-in only.",
+     items: [
+       {
+         name: "Select Your Soup",
+         description:
+           "Choose one: Soon Doo Boo, Yook Gae Jang, Kimchi Jigae, or Dwenjang.",
+         choices: [
+           {
+             name: "Soon Doo Boo",
+             image: menuImage("traditional-soon-doo-boo"),
+           },
+           {
+             name: "Yook Gae Jang",
+             image: menuImage("traditional-yook-gae-jang"),
+           },
+           {
+             name: "Kimchi Jigae",
+             image: menuImage("traditional-kimchi-jigae"),
+           },
+           {
+             name: "Dwenjang Jigae",
+             image: menuImage("traditional-dwenjang-jigae"),
+           },
+         ],
+       },
+       {
+         name: "Option 1",
+         description:
+           "Choose Squid Bokkum, Jap Chae, Spicy Chicken, or Spicy Pork.",
+         price: "$28",
+         choices: [
+           {
+             name: "Squid Bokkum",
+             image: menuImage("traditional-squid-bokkum"),
+           },
+           {
+             name: "Jap Chae",
+             image: menuImage("traditional-jap-chae"),
+           },
+           {
+             name: "Spicy Chicken",
+             image: menuImage("traditional-spicy-chicken"),
+           },
+           {
+             name: "Spicy Pork",
+             image: menuImage("traditional-spicy-pork"),
+           },
+         ],
+       },
+       {
+         name: "Option 2",
+         description:
+           "Choose Pork BBQ, Bulgogi, Chicken BBQ, or La Kalbi.",
+         price: "$34",
+         choices: [
+           {
+             name: "Pork BBQ",
+             image: menuImage("kitchen-dae-gi-kalbi"),
+           },
+           {
+             name: "Bulgogi",
+             image: menuImage("kitchen-bulgogi"),
+           },
+           {
+             name: "Chicken BBQ",
+             image: menuImage("kitchen-dak-gui"),
+           },
+           {
+             name: "La Kalbi",
+             image: menuImage("kitchen-wang-kalbi-gui"),
+           },
+         ],
+       },
+       {
+         name: "Neng Myun Alternative",
+         description:
+           "Instead of soup, choose Bibim Neng Myun or Mool Neng Myun. Available with Option 2 only.",
+         choices: [
+           {
+             name: "Bibim Neng Myun",
+             image: menuImage("traditional-bibim-neng-myun"),
+           },
+           {
+             name: "Mool Neng Myun",
+             image: menuImage("traditional-mool-neng-myun"),
+           },
+         ],
+       },
+     ],
+   },
+ ];
 
-// Part 3 continues with drinkSections.
+ // =========================================================
+ // END OF DINNER AND LUNCH COMBOS
+ // =========================================================
 
-// =========================================================
-// DRINKS
-// =========================================================
+ // =========================================================
+ // DRINKS
+ // =========================================================
 
-export const drinkSections = [
-  {
-    id: "wine",
-    number: "01",
-    title: "Wine",
-    items: [
-      {
-        name: "Paumanok Festival Red",
-        category: "Red Wine",
-        image: menuImage("drinks-paumanok-festival-red"),
-        price: "Glass $9 / Bottle $32",
-      },
-      {
-        name: "Paumanok Cabernet Sauvignon",
-        category: "Red Wine",
-        image: menuImage("drinks-paumanok-cabernet-sauvignon"),
-        price: "Glass $11 / Bottle $40",
-      },
-      {
-        name: "Paumanok Cabernet Franc",
-        category: "Red Wine",
-        image: menuImage("drinks-paumanok-cabernet-franc"),
-        price: "Glass $12 / Bottle $44",
-      },
-      {
-        name: "Paumanok Merlot",
-        category: "Red Wine",
-        image: menuImage("drinks-paumanok-merlot"),
-        price: "Glass $12 / Bottle $44",
-      },
-      {
-        name: "Paumanok Festival Chardonnay",
-        category: "White Wine",
-        image: menuImage("drinks-paumanok-festival-chardonnay"),
-        price: "Glass $9 / Bottle $32",
-      },
-      {
-        name: "Paumanok Semi Dry Riesling",
-        category: "White Wine",
-        image: menuImage("drinks-paumanok-semi-dry-riesling"),
-        price: "Glass $10 / Bottle $36",
-      },
-      {
-        name: "Paumanok Dry Riesling",
-        category: "White Wine",
-        image: menuImage("drinks-paumanok-dry-riesling"),
-        price: "Glass $10 / Bottle $36",
-      },
-      {
-        name: "Paumanok Sauvignon Blanc",
-        category: "White Wine",
-        image: menuImage("drinks-paumanok-sauvignon-blanc"),
-        price: "Glass $12 / Bottle $40",
-      },
-      {
-        name: "Paumanok Vineyard Dry Rosé",
-        category: "Rosé",
-        image: menuImage("drinks-paumanok-vineyard-dry-rose"),
-        price: "Glass $9 / Bottle $32",
-      },
-      {
-        name: "Paumanok Blanc De Blanc",
-        category: "Champagne",
-        image: menuImage("drinks-paumanok-blanc-de-blanc"),
-        price: "Bottle $50",
-      },
-      {
-        name: "Plum Wine",
-        category: "Kinsen Plum",
-        image: menuImage("drinks-plum-wine"),
-        price: "Glass $8 / Bottle $34",
-      },
-    ],
-  },
-  {
-    id: "sake",
-    number: "02",
-    title: "Sake",
-    items: [
-      {
-        name: "Hot Sake",
-        category: "Sho Chiku Bai",
-        image: menuImage("drinks-hot-sake"),
-        price: "$10",
-      },
-      {
-        name: "Cold Unfiltered Sake",
-        category: "Sho Chiku Bai",
-        image: menuImage("drinks-cold-unfiltered-sake"),
-        price: "$15",
-      },
-      {
-        name: "Cold Ginjo Sake",
-        category: "Sho Chiku Bai",
-        image: menuImage("drinks-cold-ginjo-sake"),
-        price: "$15",
-      },
-      {
-        name: "Cold Organic Sake",
-        category: "Sho Chiku Bai",
-        image: menuImage("drinks-cold-organic-sake"),
-        price: "$16",
-      },
-      {
-        name: "Cold Lychee Sake",
-        category: "Yuki Nigori",
-        image: menuImage("drinks-cold-lychee-sake"),
-        price: "$19",
-      },
-      {
-        name: "Cold Mango Sake",
-        category: "Yuki Nigori",
-        image: menuImage("drinks-cold-mango-sake"),
-        price: "$19",
-      },
-      {
-        name: "Cold White Peach Sake",
-        category: "Yuki Nigori",
-        image: menuImage("drinks-cold-white-peach-sake"),
-        price: "$19",
-      },
-      {
-        name: "Cold Cantaloupe Sake",
-        category: "Yuki Nigori",
-        image: menuImage("drinks-cold-cantaloupe-sake"),
-        price: "$19",
-      },
-    ],
-  },
-  {
-    id: "beer",
-    number: "03",
-    title: "Beer",
-    items: [
-      {
-        name: "Coors Light",
-        category: "Draft Beer",
-        image: menuImage("drinks-coors-light"),
-        price: "Pint $5 / Pitcher $18",
-      },
-      {
-        name: "Sapporo",
-        category: "Draft Beer",
-        image: menuImage("drinks-sapporo"),
-        price: "Pint $6 / Pitcher $22",
-      },
-      {
-        name: "Gridlock Hazy IPA",
-        category: "Draft Beer",
-        image: menuImage("drinks-gridlock-hazy-ipa"),
-        price: "Pint $7 / Pitcher $26",
-      },
-      {
-        name: "Blue Moon",
-        category: "Draft Beer",
-        image: menuImage("drinks-blue-moon"),
-        price: "Pint $8 / Pitcher $28",
-      },
-      {
-        name: "Non-Alcoholic Sapporo",
-        category: "Non-Alcoholic Beer",
-        image: menuImage("drinks-non-alcoholic-sapporo"),
-        price: "$5",
-      },
-      {
-        name: "Original Màkku",
-        category: "Canned Korean Beer",
-        image: menuImage("drinks-original-makku"),
-        description: "Unfiltered Korean rice beer",
-        price: "$5",
-      },
-      {
-        name: "Mango Màkku",
-        category: "Canned Korean Beer",
-        image: menuImage("drinks-mango-makku"),
-        description: "Unfiltered Korean rice beer",
-        price: "$5",
-      },
-      {
-        name: "Strawberry Màkku",
-        category: "Canned Korean Beer",
-        image: menuImage("drinks-strawberry-makku"),
-        description: "Unfiltered Korean rice beer",
-        price: "$5",
-      },
-      {
-        name: "Terra 330 ML",
-        category: "Bottled Korean Beer",
-        image: menuImage("drinks-terra-330-ml"),
-        price: "$7",
-      },
-      {
-        name: "Terra 500 ML",
-        category: "Bottled Korean Beer",
-        image: menuImage("drinks-terra-500-ml"),
-        price: "$9",
-      },
-    ],
-  },
-  {
-    id: "soju",
-    number: "04",
-    title: "Soju & Korean Drinks",
-    items: [
-      {
-        name: "Chamisul Fresh",
-        category: "Soju",
-        image: menuImage("drinks-chamisul-fresh"),
-        description: "Original",
-        price: "$14",
-      },
-      {
-        name: "Zero Sugar Soju",
-        category: "Soju",
-        image: menuImage("drinks-zero-sugar-soju"),
-        price: "$14",
-      },
-      {
-        name: "Apple",
-        category: "Flavored Soju",
-        image: menuImage("drinks-apple"),
-        price: "$15",
-      },
-      {
-        name: "Peach",
-        category: "Flavored Soju",
-        image: menuImage("drinks-peach"),
-        price: "$15",
-      },
-      {
-        name: "Lemon",
-        category: "Flavored Soju",
-        image: menuImage("drinks-lemon"),
-        price: "$15",
-      },
-      {
-        name: "Grapefruit",
-        category: "Flavored Soju",
-        image: menuImage("drinks-grapefruit"),
-        price: "$15",
-      },
-      {
-        name: "Green Grapes",
-        category: "Flavored Soju",
-        image: menuImage("drinks-green-grapes"),
-        price: "$15",
-      },
-      {
-        name: "Strawberry",
-        category: "Flavored Soju",
-        image: menuImage("drinks-strawberry"),
-        price: "$15",
-      },
-      {
-        name: "Plum",
-        category: "Flavored Soju",
-        image: menuImage("drinks-plum"),
-        price: "$15",
-      },
-      {
-        name: "Apple Mango",
-        category: "Flavored Soju",
-        image: menuImage("drinks-apple-mango"),
-        price: "$15",
-      },
-      {
-        name: "Wild Raspberry Wine",
-        category: "Bok Boon Ja",
-        image: menuImage("drinks-wild-raspberry-wine"),
-        price: "$16",
-      },
-      {
-        name: "So-Maek",
-        category: "Korean Beer + Soju",
-        image: menuImage("drinks-so-maek"),
-        description:
-          "One pitcher of Coors Light and one bottle of Original Soju. One shot of soju per glass, with beer added to your preferred ratio.",
-        price: "$30",
-      },
-    ],
-  },
-  {
-    id: "korean-fruit-drinks",
-    number: "05",
-    title: "Korean Fruit Drinks",
-    note: "Available hot for $5 or iced for $6.",
-    items: [
-      {
-        name: "Hallabong",
-        image: menuImage("drinks-hallabong"),
-        description: "Jeju Island orange",
-        price: "Hot $5 / Iced $6",
-      },
-      {
-        name: "Yuja",
-        image: menuImage("drinks-yuja"),
-        description: "Bittersweet citrus fruit",
-        price: "Hot $5 / Iced $6",
-      },
-      {
-        name: "Ume",
-        image: menuImage("drinks-ume"),
-        description: "Tangy and sour plum",
-        price: "Hot $5 / Iced $6",
-      },
-    ],
-  },
-  {
-    id: "soft-drinks",
-    number: "06",
-    title: "Soft Drinks",
-    items: [
-      {
-        name: "Pepsi",
-        category: "Soda",
-        image: menuImage("drinks-pepsi"),
-        price: "$2",
-      },
-      {
-        name: "Pepsi Zero",
-        category: "Soda",
-        image: menuImage("drinks-pepsi-zero"),
-        price: "$2",
-      },
-      {
-        name: "Ginger Ale",
-        category: "Soda",
-        image: menuImage("drinks-ginger-ale"),
-        price: "$2",
-      },
-      {
-        name: "Starry",
-        category: "Soda",
-        image: menuImage("drinks-starry"),
-        description: "Lemon Lime",
-        price: "$2",
-      },
-      {
-        name: "Orange Soda",
-        category: "Soda",
-        image: menuImage("drinks-orange-soda"),
-        price: "$2",
-      },
-      {
-        name: "Raspberry Iced Tea",
-        category: "Tea",
-        image: menuImage("drinks-raspberry-iced-tea"),
-        price: "$2",
-      },
-      {
-        name: "Orange Juice",
-        category: "Juice",
-        image: menuImage("drinks-orange-juice"),
-        price: "$3",
-      },
-      {
-        name: "Apple Juice",
-        category: "Juice",
-        image: menuImage("drinks-apple-juice"),
-        price: "$3",
-      },
-      {
-        name: "Cranberry Juice",
-        category: "Juice",
-        image: menuImage("drinks-cranberry-juice"),
-        price: "$3",
-      },
-      {
-        name: "Lemonade",
-        category: "Juice",
-        image: menuImage("drinks-lemonade"),
-        price: "$3",
-      },
-      {
-        name: "Milk",
-        category: "Other",
-        image: menuImage("drinks-milk"),
-        price: "$2",
-      },
-      {
-        name: "Green Tea",
-        category: "Tea",
-        image: menuImage("drinks-green-tea"),
-        price: "$2",
-      },
-      {
-        name: "Unsweetened Iced Tea",
-        category: "Tea",
-        image: menuImage("drinks-unsweetened-iced-tea"),
-        price: "$2",
-      },
-      {
-        name: "Shirley Temple",
-        category: "Other",
-        image: menuImage("drinks-shirley-temple"),
-        price: "$3",
-      },
-    ],
-  },
-];
+ export const drinkSections = [
+   {
+     id: "wine",
+     number: "01",
+     title: "Wine",
+     items: [
+       {
+         name: "Paumanok Festival Red",
+         category: "Red Wine",
+         image: menuImage("drinks-paumanok-festival-red"),
+         price: "Glass $9 / Bottle $32",
+       },
+       {
+         name: "Paumanok Cabernet Sauvignon",
+         category: "Red Wine",
+         image: menuImage("drinks-paumanok-cabernet-sauvignon"),
+         price: "Glass $11 / Bottle $40",
+       },
+       {
+         name: "Paumanok Cabernet Franc",
+         category: "Red Wine",
+         image: menuImage("drinks-paumanok-cabernet-franc"),
+         price: "Glass $12 / Bottle $44",
+       },
+       {
+         name: "Paumanok Merlot",
+         category: "Red Wine",
+         image: menuImage("drinks-paumanok-merlot"),
+         price: "Glass $12 / Bottle $44",
+       },
+       {
+         name: "Paumanok Festival Chardonnay",
+         category: "White Wine",
+         image: menuImage("drinks-paumanok-festival-chardonnay"),
+         price: "Glass $9 / Bottle $32",
+       },
+       {
+         name: "Paumanok Semi Dry Riesling",
+         category: "White Wine",
+         image: menuImage("drinks-paumanok-semi-dry-riesling"),
+         price: "Glass $10 / Bottle $36",
+       },
+       {
+         name: "Paumanok Dry Riesling",
+         category: "White Wine",
+         image: menuImage("drinks-paumanok-dry-riesling"),
+         price: "Glass $10 / Bottle $36",
+       },
+       {
+         name: "Paumanok Sauvignon Blanc",
+         category: "White Wine",
+         image: menuImage("drinks-paumanok-sauvignon-blanc"),
+         price: "Glass $12 / Bottle $40",
+       },
+       {
+         name: "Paumanok Vineyard Dry Rosé",
+         category: "Rosé",
+         image: menuImage("drinks-paumanok-vineyard-dry-rose"),
+         price: "Glass $9 / Bottle $32",
+       },
+       {
+         name: "Paumanok Blanc De Blanc",
+         category: "Champagne",
+         image: menuImage("drinks-paumanok-blanc-de-blanc"),
+         price: "Bottle $50",
+       },
+       {
+         name: "Plum Wine",
+         category: "Kinsen Plum",
+         image: menuImage("drinks-plum-wine"),
+         price: "Glass $8 / Bottle $34",
+       },
+     ],
+   },
+   {
+     id: "sake",
+     number: "02",
+     title: "Sake",
+     items: [
+       {
+         name: "Hot Sake",
+         category: "Sho Chiku Bai",
+         image: menuImage("drinks-hot-sake"),
+         price: "$10",
+       },
+       {
+         name: "Cold Unfiltered Sake",
+         category: "Sho Chiku Bai",
+         image: menuImage("drinks-cold-unfiltered-sake"),
+         price: "$15",
+       },
+       {
+         name: "Cold Ginjo Sake",
+         category: "Sho Chiku Bai",
+         image: menuImage("drinks-cold-ginjo-sake"),
+         price: "$15",
+       },
+       {
+         name: "Cold Organic Sake",
+         category: "Sho Chiku Bai",
+         image: menuImage("drinks-cold-organic-sake"),
+         price: "$16",
+       },
+       {
+         name: "Cold Lychee Sake",
+         category: "Yuki Nigori",
+         image: menuImage("drinks-cold-lychee-sake"),
+         price: "$19",
+       },
+       {
+         name: "Cold Mango Sake",
+         category: "Yuki Nigori",
+         image: menuImage("drinks-cold-mango-sake"),
+         price: "$19",
+       },
+       {
+         name: "Cold White Peach Sake",
+         category: "Yuki Nigori",
+         image: menuImage("drinks-cold-white-peach-sake"),
+         price: "$19",
+       },
+       {
+         name: "Cold Cantaloupe Sake",
+         category: "Yuki Nigori",
+         image: menuImage("drinks-cold-cantaloupe-sake"),
+         price: "$19",
+       },
+     ],
+   },
+   {
+     id: "beer",
+     number: "03",
+     title: "Beer",
+     items: [
+       {
+         name: "Coors Light",
+         category: "Draft Beer",
+         image: menuImage("drinks-coors-light"),
+         price: "Pint $5 / Pitcher $18",
+       },
+       {
+         name: "Sapporo",
+         category: "Draft Beer",
+         image: menuImage("drinks-sapporo"),
+         price: "Pint $6 / Pitcher $22",
+       },
+       {
+         name: "Gridlock Hazy IPA",
+         category: "Draft Beer",
+         image: menuImage("drinks-gridlock-hazy-ipa"),
+         price: "Pint $7 / Pitcher $26",
+       },
+       {
+         name: "Blue Moon",
+         category: "Draft Beer",
+         image: menuImage("drinks-blue-moon"),
+         price: "Pint $8 / Pitcher $28",
+       },
+       {
+         name: "Non-Alcoholic Sapporo",
+         category: "Non-Alcoholic Beer",
+         image: menuImage("drinks-non-alcoholic-sapporo"),
+         price: "$5",
+       },
+       {
+         name: "Original Màkku",
+         category: "Canned Korean Beer",
+         image: menuImage("drinks-original-makku"),
+         description: "Unfiltered Korean rice beer",
+         price: "$5",
+       },
+       {
+         name: "Mango Màkku",
+         category: "Canned Korean Beer",
+         image: menuImage("drinks-mango-makku"),
+         description: "Unfiltered Korean rice beer",
+         price: "$5",
+       },
+       {
+         name: "Strawberry Màkku",
+         category: "Canned Korean Beer",
+         image: menuImage("drinks-strawberry-makku"),
+         description: "Unfiltered Korean rice beer",
+         price: "$5",
+       },
+       {
+         name: "Terra 330 ML",
+         category: "Bottled Korean Beer",
+         image: menuImage("drinks-terra-330-ml"),
+         price: "$7",
+       },
+       {
+         name: "Terra 500 ML",
+         category: "Bottled Korean Beer",
+         image: menuImage("drinks-terra-500-ml"),
+         price: "$9",
+       },
+     ],
+   },
+   {
+     id: "soju",
+     number: "04",
+     title: "Soju & Korean Drinks",
+     items: [
+       {
+         name: "Chamisul Fresh",
+         category: "Soju",
+         image: menuImage("drinks-chamisul-fresh"),
+         description: "Original",
+         price: "$14",
+       },
+       {
+         name: "Zero Sugar Soju",
+         category: "Soju",
+         image: menuImage("drinks-zero-sugar-soju"),
+         price: "$14",
+       },
+       {
+         name: "Apple",
+         category: "Flavored Soju",
+         image: menuImage("drinks-apple"),
+         price: "$15",
+       },
+       {
+         name: "Peach",
+         category: "Flavored Soju",
+         image: menuImage("drinks-peach"),
+         price: "$15",
+       },
+       {
+         name: "Lemon",
+         category: "Flavored Soju",
+         image: menuImage("drinks-lemon"),
+         price: "$15",
+       },
+       {
+         name: "Grapefruit",
+         category: "Flavored Soju",
+         image: menuImage("drinks-grapefruit"),
+         price: "$15",
+       },
+       {
+         name: "Green Grapes",
+         category: "Flavored Soju",
+         image: menuImage("drinks-green-grapes"),
+         price: "$15",
+       },
+       {
+         name: "Strawberry",
+         category: "Flavored Soju",
+         image: menuImage("drinks-strawberry"),
+         price: "$15",
+       },
+       {
+         name: "Plum",
+         category: "Flavored Soju",
+         image: menuImage("drinks-plum"),
+         price: "$15",
+       },
+       {
+         name: "Apple Mango",
+         category: "Flavored Soju",
+         image: menuImage("drinks-apple-mango"),
+         price: "$15",
+       },
+       {
+         name: "Wild Raspberry Wine",
+         category: "Bok Boon Ja",
+         image: menuImage("drinks-wild-raspberry-wine"),
+         price: "$16",
+       },
+       {
+         name: "So-Maek",
+         category: "Korean Beer + Soju",
+         image: menuImage("drinks-so-maek"),
+         description:
+           "One pitcher of Coors Light and one bottle of Original Soju. One shot of soju per glass, with beer added to your preferred ratio.",
+         price: "$30",
+       },
+     ],
+   },
+   {
+     id: "korean-fruit-drinks",
+     number: "05",
+     title: "Korean Fruit Drinks",
+     note: "Available hot for $5 or iced for $6.",
+     items: [
+       {
+         name: "Hallabong",
+         image: menuImage("drinks-hallabong"),
+         description: "Jeju Island orange",
+         price: "Hot $5 / Iced $6",
+       },
+       {
+         name: "Yuja",
+         image: menuImage("drinks-yuja"),
+         description: "Bittersweet citrus fruit",
+         price: "Hot $5 / Iced $6",
+       },
+       {
+         name: "Ume",
+         image: menuImage("drinks-ume"),
+         description: "Tangy and sour plum",
+         price: "Hot $5 / Iced $6",
+       },
+     ],
+   },
+   {
+     id: "soft-drinks",
+     number: "06",
+     title: "Soft Drinks",
+     items: [
+       {
+         name: "Pepsi",
+         category: "Soda",
+         image: menuImage("drinks-pepsi"),
+         price: "$2",
+       },
+       {
+         name: "Pepsi Zero",
+         category: "Soda",
+         image: menuImage("drinks-pepsi-zero"),
+         price: "$2",
+       },
+       {
+         name: "Ginger Ale",
+         category: "Soda",
+         image: menuImage("drinks-ginger-ale"),
+         price: "$2",
+       },
+       {
+         name: "Starry",
+         category: "Soda",
+         image: menuImage("drinks-starry"),
+         description: "Lemon Lime",
+         price: "$2",
+       },
+       {
+         name: "Orange Soda",
+         category: "Soda",
+         image: menuImage("drinks-orange-soda"),
+         price: "$2",
+       },
+       {
+         name: "Raspberry Iced Tea",
+         category: "Tea",
+         image: menuImage("drinks-raspberry-iced-tea"),
+         price: "$2",
+       },
+       {
+         name: "Orange Juice",
+         category: "Juice",
+         image: menuImage("drinks-orange-juice"),
+         price: "$3",
+       },
+       {
+         name: "Apple Juice",
+         category: "Juice",
+         image: menuImage("drinks-apple-juice"),
+         price: "$3",
+       },
+       {
+         name: "Cranberry Juice",
+         category: "Juice",
+         image: menuImage("drinks-cranberry-juice"),
+         price: "$3",
+       },
+       {
+         name: "Lemonade",
+         category: "Juice",
+         image: menuImage("drinks-lemonade"),
+         price: "$3",
+       },
+       {
+         name: "Milk",
+         category: "Other",
+         image: menuImage("drinks-milk"),
+         price: "$2",
+       },
+       {
+         name: "Green Tea",
+         category: "Tea",
+         image: menuImage("drinks-green-tea"),
+         price: "$2",
+       },
+       {
+         name: "Unsweetened Iced Tea",
+         category: "Tea",
+         image: menuImage("drinks-unsweetened-iced-tea"),
+         price: "$2",
+       },
+       {
+         name: "Shirley Temple",
+         category: "Other",
+         image: menuImage("drinks-shirley-temple"),
+         price: "$3",
+       },
+     ],
+   },
+ ];
+
+ // =========================================================
+ // END OF MENU DATA
+ // =========================================================

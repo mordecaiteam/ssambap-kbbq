@@ -2,16 +2,56 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// =========================================================
+// OPTIMIZED DESKTOP HERO IMAGES
+// =========================================================
+
 import hero1 from "../../assets/hero/hero-1.webp";
-import hero2 from "../../assets/hero/hero-2.jpg";
+import hero2 from "../../assets/hero/hero-2.webp";
 import hero3 from "../../assets/hero/hero-3.webp";
 import hero4 from "../../assets/hero/hero-4.webp";
 
-const slides = [hero1, hero2, hero3, hero4];
+// =========================================================
+// OPTIMIZED MOBILE HERO IMAGES
+// =========================================================
+
+import mobileHero1 from "../../assets/hero/mobile/hero-1.webp";
+import mobileHero2 from "../../assets/hero/mobile/hero-2.webp";
+import mobileHero3 from "../../assets/hero/mobile/hero-3.webp";
+import mobileHero4 from "../../assets/hero/mobile/hero-4.webp";
+
+// =========================================================
+// SLIDESHOW CONFIGURATION
+// =========================================================
+
+const slides = [
+  {
+    desktop: hero1,
+    mobile: mobileHero1,
+  },
+  {
+    desktop: hero2,
+    mobile: mobileHero2,
+  },
+  {
+    desktop: hero3,
+    mobile: mobileHero3,
+  },
+  {
+    desktop: hero4,
+    mobile: mobileHero4,
+  },
+];
 
 const SLIDE_DURATION = 3000;
+const TRANSITION_DURATION = 1800;
+
+// =========================================================
+// RESY CONFIGURATION
+// =========================================================
 
 const RESY_VENUE_ID = 95670;
+
 const RESY_API_KEY =
   "DE2RYLWYAtFzT7qTe35vhkovpRJ0zO5C";
 
@@ -20,6 +60,10 @@ const RESY_SCRIPT_URL =
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Tracks which slides should be rendered.
+  // Only the first slide is rendered initially.
+  const [loadedSlides, setLoadedSlides] = useState([0]);
 
   const heroRef = useRef(null);
   const resyContainerRef = useRef(null);
@@ -30,15 +74,32 @@ export default function Hero() {
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      setCurrentSlide(
-        (current) => (current + 1) % slides.length
-      );
+      setCurrentSlide((current) => {
+        return (current + 1) % slides.length;
+      });
     }, SLIDE_DURATION);
 
     return () => {
       window.clearInterval(interval);
     };
   }, []);
+
+  // =========================================================
+  // PREPARE CURRENT AND NEXT SLIDE
+  // =========================================================
+
+  useEffect(() => {
+    const nextSlide = (currentSlide + 1) % slides.length;
+
+    setLoadedSlides((previous) => {
+      const updated = new Set(previous);
+
+      updated.add(currentSlide);
+      updated.add(nextSlide);
+
+      return [...updated];
+    });
+  }, [currentSlide]);
 
   // =========================================================
   // RESY WIDGET — ISOLATED DOM
@@ -55,12 +116,8 @@ export default function Hero() {
     /*
      * Resy is allowed to modify its own child element,
      * but not the container React manages.
-     *
-     * React renders:
-     * <div ref={resyContainerRef} />
-     *
-     * We manually create the child used by Resy.
      */
+
     const widgetMount = document.createElement("div");
 
     container.appendChild(widgetMount);
@@ -103,6 +160,7 @@ export default function Hero() {
       );
     } else {
       script = document.createElement("script");
+
       script.src = RESY_SCRIPT_URL;
       script.async = true;
 
@@ -124,10 +182,6 @@ export default function Hero() {
         );
       }
 
-      /*
-       * Only clean up inside our own isolated container.
-       * React itself never renders widgetMount.
-       */
       if (container.isConnected) {
         container.replaceChildren();
       }
@@ -166,30 +220,66 @@ export default function Hero() {
       className="relative min-h-[calc(100svh-6rem)] overflow-hidden bg-black text-white"
     >
       {/* =====================================================
-          BACKGROUND SLIDESHOW
+          OPTIMIZED RESPONSIVE BACKGROUND SLIDESHOW
       ===================================================== */}
 
       <div className="absolute inset-0">
-        {slides.map((slide, index) => (
-          <img
-            key={slide}
-            src={slide}
-            alt=""
-            aria-hidden="true"
-            className={`absolute inset-0 h-full w-full object-cover transition-all duration-[1800ms] ease-in-out ${
-              index === currentSlide
-                ? "scale-100 opacity-100"
-                : "scale-[1.03] opacity-0"
-            }`}
-          />
-        ))}
+        {slides.map((slide, index) => {
+          // Don't render slides until they're needed.
+          if (!loadedSlides.includes(index)) {
+            return null;
+          }
+
+          const isActive = index === currentSlide;
+
+          return (
+            <picture key={index}>
+              {/* MOBILE IMAGE */}
+              <source
+                media="(max-width: 767px)"
+                srcSet={slide.mobile}
+                type="image/webp"
+              />
+
+              {/* DESKTOP IMAGE */}
+              <source
+                media="(min-width: 768px)"
+                srcSet={slide.desktop}
+                type="image/webp"
+              />
+
+              <img
+                src={slide.desktop}
+                alt=""
+                aria-hidden="true"
+                fetchPriority={
+                  index === 0 ? "high" : "low"
+                }
+                loading={
+                  index === 0 ? "eager" : "lazy"
+                }
+                decoding="async"
+                className={`absolute inset-0 h-full w-full object-cover transition-all ease-in-out ${
+                  isActive
+                    ? "scale-100 opacity-100"
+                    : "scale-[1.03] opacity-0"
+                }`}
+                style={{
+                  transitionDuration: `${TRANSITION_DURATION}ms`,
+                }}
+              />
+            </picture>
+          );
+        })}
       </div>
 
-      {/* BACKGROUND OVERLAYS */}
+      {/* =====================================================
+          BACKGROUND OVERLAYS
+      ===================================================== */}
 
-      <div className="absolute inset-0 bg-black/45" />
+      <div className="pointer-events-none absolute inset-0 bg-black/45" />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/25" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/25" />
 
       {/* =====================================================
           HERO CONTENT
@@ -197,6 +287,7 @@ export default function Hero() {
 
       <div className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-[1600px] flex-col justify-end px-6 pb-24 md:px-10 md:pb-28 lg:px-12 lg:pb-32">
         <div className="max-w-5xl">
+
           <p className="mb-6 text-[10px] font-medium uppercase tracking-[0.32em] text-white/70 md:text-[11px]">
             Authentic Korean Cuisine & BBQ
           </p>
@@ -208,6 +299,7 @@ export default function Hero() {
           </h1>
 
           <div className="mt-8 flex max-w-3xl flex-col justify-between gap-8 md:mt-10 md:flex-row md:items-end">
+
             <p className="max-w-md text-sm leading-6 text-white/60 md:text-[15px] md:leading-7">
               Gather around the grill for Korean
               barbecue, traditional dishes,
@@ -218,6 +310,7 @@ export default function Hero() {
             {/* BUTTONS */}
 
             <div className="flex flex-wrap items-center gap-3">
+
               {/* VIEW MENU */}
 
               <Link
@@ -295,7 +388,9 @@ export default function Hero() {
         <div className="h-px w-10 bg-white/20" />
       </div>
 
-      {/* SCROLL ANIMATION */}
+      {/* =====================================================
+          SCROLL ANIMATION
+      ===================================================== */}
 
       <style>{`
         @keyframes scrollLine {
